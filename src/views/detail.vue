@@ -1,5 +1,6 @@
 <template>
     <div>
+      <carrousel/>
         <h1>{{ msg }}</h1>
         <ul>
           <li v-for="product in products.products">
@@ -22,11 +23,14 @@
 </template>
 
 <script>
+import moment from 'moment'
 import axios from '../utils/axiosService'
 import {demoApi} from '@/api/demo.js'
 const ERR_OK = 0
 export default {
   name: 'detail',
+  components: {
+  },
   data () {
     return {
       msg: 'my detail',
@@ -46,13 +50,14 @@ export default {
     }
   },
   created() {
-    demoApi().then((res) => {
-      res = res.data
-      this.products = res
-      console.log(this.products,"this.asssss")
-    }).catch((error) => {
-      console.warn(error)
-    })
+    console.log(moment(1512444868624).format("YYYY/MM/DD"),"momentaaaaaaaaaaaaaaaaaaaaaaaaa")
+    // demoApi().then((res) => {
+    //   res = res.data
+    //   this.products = res
+    //   console.log(this.products,"this.asssss")
+    // }).catch((error) => {
+    //   console.warn(error)
+    // })
   },
   methods: {
     submitForm(formName) {

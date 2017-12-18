@@ -32,19 +32,25 @@ module.exports = {
         var users = await User.findAll({});
         ctx.response.body = users;
     },
+    'GET /api/logOut': async (ctx, next) => {
+        ctx.response.type = 'application/json';
+        ctx.session = null
+        ctx.response.body = "已成功注销";
+    },
     'POST /api/login': async (ctx, next) => {
         ctx.response.type = 'application/json';
         let back = ""
+        let username = await User.findAll({ where: {
+            'username': ctx.request.body.username
+        }});
+        let uid = username[0].id
         //登录验证
         let tmpData = {
             username: ctx.request.body.username,
             password: ctx.request.body.password
         }
-        let username = await User.findAll({ where: {
-            'username': tmpData.username
-        } });
-        if (ctx.session.user) {
-            ctx.body = `${ctx.session.user.username} 已登录，请勿重复登录`
+        if(ctx.session.isLogin) {
+            back = "请勿重复登录"
         }
         else if(username.length == 0) {
             console.log("用户不存在")
@@ -60,10 +66,23 @@ module.exports = {
                 console.log("密码错误")
                 back = "密码错误"
             } else {
-                console.log("登陆成功")
-                back = "登陆成功"
+                let session = ctx.session
+                session.isLogin = true
+                session.username = tmpData.username
+                session.uid = uid 
+                back = '登录成功'
             }
         }
+        ctx.response.body = back;
+    },
+    'GET /api/examine': async (ctx, next) => {
+        ctx.response.type = 'application/json';
+        let back = {
+            uid: ctx.session.uid,
+            username: ctx.session.username,
+            isLogin: ctx.session.isLogin
+        }
+        console.log(back)
         ctx.response.body = back;
     }
 };

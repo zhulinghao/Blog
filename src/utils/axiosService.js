@@ -4,8 +4,8 @@ import { Loading, Message } from 'element-ui'
  axios.defaults.timeout = 5000
  const baseURL = 'http://localhost:5000'
  const service = axios.create({
-  baseURL: baseURL,
-  timeout: 5000
+    baseURL: baseURL,
+    timeout: 5000
 })
  // http请求拦截器
  var loadinginstace

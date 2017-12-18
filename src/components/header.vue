@@ -4,13 +4,16 @@
     class="el-menu-demo"
     mode="horizontal"
     text-color="#8590a6">
-      <div class="logo">MUSASHI</div>
+      <div class="logo">YUYAN</div>
       <el-menu-item index="1"><router-link to="/">首页</router-link></el-menu-item>
-      <el-menu-item index="2"><router-link to="/detail">发现</router-link></el-menu-item>
+      <el-menu-item index="2"><router-link to="/detail">开发TEST</router-link></el-menu-item>
       <el-menu-item index="3">话题</el-menu-item>
       <el-menu-item index="4"><el-input size='small' v-model="input" placeholder="请输入内容"></el-input></el-menu-item>  
-      <el-menu-item index="5" class="headerRight"><i class="el-icon-bell"></i></el-menu-item>
-      <el-menu-item index="6"><i class="el-icon-message"></i></el-menu-item>
+      <!-- <el-menu-item index="5" class="headerRight"><i class="el-icon-bell"></i></el-menu-item>
+      <el-menu-item index="6"><i class="el-icon-message"></i></el-menu-item> -->
+      <el-menu-item index="6" v-show="isNotLogin"><router-link to="/reg">注册/登陆</router-link></el-menu-item>
+      <el-menu-item index="6" v-show="isLogin"><router-link to="/">用户中心</router-link></el-menu-item>
+      <el-menu-item index="6" v-show="isLogin" @click="logOut">注销</el-menu-item>
     </el-menu>
 </template>
 
@@ -20,8 +23,14 @@
       return {
         activeIndex: '1',
         activeIndex2: '2',
-        input: ''
+        input: '',
+        isNotLogin: true,
+        isLogin: false
       };
+    },
+    created() {
+    },
+    methods: {
     }
   }
 </script>

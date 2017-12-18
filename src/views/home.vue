@@ -1,10 +1,9 @@
 <template>
   <div>
-    <div class="topBlock"></div>
-    <myHeader/>
     <el-container class="homeContainer">
         <el-main>
-          <homeCard/>
+          <mainHeader/>
+          <homeCard :articles='articles'></homeCard>
         </el-main>
         <el-aside width="30%">
           <homeAsideCard/>
@@ -15,21 +14,32 @@
 </template>
 
 <script>
+import mainHeader from '@/components/mainHeader.vue'
 import homeCard from '@/components/homeCard.vue'
 import homeAsideCard from '@/components/homeAsideCard.vue'
 import homeAsideMeanu from '@/components/homeAsideMeanu.vue'
-import myHeader from '@/components/header.vue'
+import {getArticle} from '@/api/article.js'
+
 export default {
   name: 'home',
   components: {
     homeCard,
     homeAsideCard,
     homeAsideMeanu,
-    myHeader
+    mainHeader
   },
   data () {
     return {
+      articles: ''
     }
+  },
+  created() {
+    getArticle().then( (req) => {
+      this.articles = req.data
+      console.log(this.articles,"aaaaaaaaa")
+    }).catch((error) => {
+      console.warn(error)
+    })
   },
   methods: {
     Affix () {
@@ -47,9 +57,5 @@ export default {
   .homeContainer {
     margin-top: 10px;
     padding: 0 15%;
-  }
-  .topBlock {
-    width: 100%;
-    height: 60px;
   }
 </style>

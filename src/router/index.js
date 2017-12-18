@@ -1,14 +1,19 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import home from '@/routers/home'
-import detail from '@/routers/detail'
-import reg from '@/routers/reg'
-import write from '@/routers/write'
+import home from '@/views/home'
+import detail from '@/views/detail'
+import reg from '@/views/reg'
+import write from '@/views/write'
+import articleDetail from '@/views/articleDetail'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
+    {
+      path: '/',
+      redirect: '/home'
+    },
     {
       path: '/home',
       name: 'home',
@@ -20,7 +25,7 @@ export default new Router({
       component: detail
     },
     {
-      path: '/',
+      path: '/reg',
       name: 'reg',
       component: reg
     },
@@ -28,6 +33,11 @@ export default new Router({
       path: '/write',
       name: 'write',
       component: write
+    },
+    {
+      path: '/articleDetail/:aid',
+      name: 'articleDetail',
+      component: articleDetail
     }
   ]
 })
