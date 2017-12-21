@@ -1,16 +1,29 @@
 <template>
-  <el-card class="box-card">
-    <div v-for="o in 3" :key="o" class="text item">
-      友情链接
-    </div>
-  </el-card>
+      <el-carousel width="100%" height="200px" :interval="5000" arrow="always">
+          <el-carousel-item v-for="item in 4" :key="item">
+            <h3>{{ item }}</h3>
+          </el-carousel-item>
+        </el-carousel>
 </template>
 
 <style>
-.text {
-    font-size: 14px;
+.blockkk {
+  margin-bottom: 10px
 }
-.item {
-    padding: 5px 0;
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 18px;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+  text-align: center
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n+1) {
+  background-color: #d3dce6;
 }
 </style>

@@ -1,17 +1,23 @@
 <template>
     <div>
+        <el-tooltip class="item" effect="dark" content="此按钮可以对文章内容进行缩放哦" placement="top">
+            <div style="position:absolute;left: 60%;cursor: pointer" @click="homeCardZoom">           
+                <i v-show="zoom" class="el-icon-plus"></i>
+                <i v-show="!zoom" class="el-icon-minus"></i>            
+            </div>
+        </el-tooltip>
         <el-card class="box-card" v-for="n in articles" :key="n.id">
                 <div slot="header" class="clearfix">
-                    <span style="color: #878d99;">文章类型：{{articleType}}</span>
+                    <span style="color: #878d99;">文章类型：{{n.articleType}}</span>
                 </div>
                 <div class="home_card_author_block">
                         <img src="../assets/avatar/头像.jpg" alt="23333" class="home_card_img">
                         <span class="home_card_author_text">
-                            <b class="home_card_author">{{Author}}</b>: {{AuthorInfo}}
+                            <b class="home_card_author">{{n.uid}}</b>: {{AuthorInfo}}
                         </span>
                 </div>
-                <div style="margin-bottom: 5px">
-                    <router-link :to="{ name:'articleDetail', params: {aid: n.id} }"><b style="font-size: 18px"></b>{{n.title}}</b></router-link>
+                <div class="title">
+                    <router-link :to="{ name:'articleDetail', params: {aid: n.id} }"><b></b>{{n.title}}</b></router-link>
                 </div>
                 <div class="item">
                 <div class="parent">
@@ -30,6 +36,7 @@
 </template>
 
 <script>
+    import $ from 'jquery'
     export default {
       data() {
         return {
@@ -39,6 +46,8 @@
           comment: '12',
           Author: 'MUSASHI',
           AuthorInfo: ' coming home!!!!',
+          contentHeight: '',
+          zoom: true
         }
       },
       props: {
@@ -48,6 +57,17 @@
       },
       created() {
         console.log(this.articles,"article...")
+      },
+      methods: {
+        homeCardZoom() {
+            if ($('.parent').css('min-height') == '500px') {
+                $('.parent').animate({minHeight: 130}, 400);
+                this.zoom = true
+            } else {
+                $('.parent').animate({minHeight: 500}, 400);
+                this.zoom = false
+            }
+        }
       }
     }
   </script>
@@ -101,8 +121,13 @@
     margin-bottom: 15px;
     border: rgba(0,0,0,.08) solid 2px;
     border-radius: 5px;
+    transition: .5s;
 }
-
+.title {
+    margin-bottom: 5px;
+    font-size: 20px;
+    font-weight: 700
+}
 .article_content {
     position: absolute;
     top: 0;
@@ -112,5 +137,15 @@
     font-size: 15px;
     overflow-y:scroll;
     overflow-x:hidden;
+}
+.el-icon-plus,
+.el-icon-minus {
+    font-size: 26px;
+    color: rgb(133, 144, 166);
+}
+.el-icon-plus:hover,
+.el-icon-minus:hover {
+    color: #0f88eb;
+    transition: .5s;
 }
 </style>

@@ -15,7 +15,8 @@
                 <el-input v-model="ruleForm.gender" placeholder="gender"></el-input>
               </el-form-item>
             <el-form-item prop="pic">
-              <!-- <el-upload
+               <!-- <el-upload
+                v-model="ruleForm.pic"
                 class="avatar-uploader"
                 action="http://localhost:5000/api/addAvatar"
                 :show-file-list="false"
@@ -83,11 +84,11 @@
         },
         loginRules: {
           username: [
-            { required: true, message: '用户名是必填项', trigger: 'blur' },
-            { min: 3, max: 9, message: '长度在 3 到 9 个字符', trigger: 'blur' }
+            { required: true, message: '用户名是必填项', trigger: 'focus' },
+            { min: 3, max: 9, message: '长度在 3 到 9 个字符', trigger: 'focus' }
           ],
           password: [
-            { required: true, message: '密码是必填项', trigger: 'blur' },
+            { required: true, message: '密码是必填项', trigger: 'focus' },
           ]
         }
       };
@@ -97,16 +98,22 @@
           console.log(tab, event);
       },
       submitForm(formName) {
+        let that = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('注册成功');
             const data = this.ruleForm
             axios.post("/api/reg",data).then(function (req) {
-              alert(req.data)
+              that.$message({
+                message: req.data,
+                type: 'success'
+              })
+              that.activeName = 'second'
             })
-            this.activeName = 'second'
           } else {
-            alert('请把注册信息填写完全');
+            that.$message({
+                message: '请把注册信息填写完全',
+                type: 'error'
+            })
             return false;
           }
         });
@@ -115,15 +122,20 @@
         let that = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('开始登录');
             const data = this.loginForm
             console.log(data,"data");
             axios.post("/api/login",data).then(function (req) {
-              console.log(req.data)
+              that.$message({
+                message: req.data,
+                type: 'success'
+              })
               that.$router.push({ path: '/home'})
             })
           } else {
-            alert('请输入合适的用户名和密码');
+            that.$message({
+                message: '请输入合适的用户名和密码',
+                type: 'error'
+            })
             return false;
           }
         });
@@ -133,6 +145,7 @@
       },
       handleAvatarSuccess(res, file) {
         this.imageUrl = URL.createObjectURL(file.raw);
+        this.ruleForm.pic = this.imageUrl
         console.log(this.imageUrl,"this.imageUrl.......................")
       },
       beforeAvatarUpload (file) {

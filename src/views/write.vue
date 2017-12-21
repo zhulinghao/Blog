@@ -5,7 +5,7 @@
             <span style="margin-left: 200px;font-weight:800">写文章</span>
         </div>
         <div class="myEdit">
-            <myEdit/>
+            <myEdit :loginStatic="loginStatic"/>
         </div>
     </div>
 </template>
@@ -14,8 +14,18 @@
     import myEdit from '@/components/myEdit.vue'
     export default {
       name: 'write',
+      data() {
+          return{
+            
+          }
+      },
       components: {
         myEdit
+      },
+      props: {
+        loginStatic: {
+          required: true
+        }
       }
     }
 </script>

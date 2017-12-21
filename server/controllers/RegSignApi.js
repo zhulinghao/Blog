@@ -37,6 +37,11 @@ module.exports = {
         ctx.session = null
         ctx.response.body = "已成功注销";
     },
+    'POST /api/addAvatar': async (ctx, next) => {
+        ctx.response.type = 'application/json';
+        console.log(ctx,"ctxxxxxxxxxxxxxxxxxxx")
+        ctx.response.body = "UPDATE";
+    },
     'POST /api/login': async (ctx, next) => {
         ctx.response.type = 'application/json';
         let back = ""

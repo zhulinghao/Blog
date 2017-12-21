@@ -5,10 +5,15 @@ import detail from '@/views/detail'
 import reg from '@/views/reg'
 import write from '@/views/write'
 import articleDetail from '@/views/articleDetail'
+import personnalCenter from '@/views/personnalCenter'
+import NotFoundComponent from '@/views/NotFoundComponent'
+import game from '@/views/game/game.vue'
+import answer from '@/views/answer'
 
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -18,6 +23,11 @@ export default new Router({
       path: '/home',
       name: 'home',
       component: home
+    },
+    {
+      path: '/game',
+      name: 'game',
+      component: game
     },
     {
       path: '/detail',
@@ -38,6 +48,20 @@ export default new Router({
       path: '/articleDetail/:aid',
       name: 'articleDetail',
       component: articleDetail
+    },
+    {
+      path: '/personnalCenter',
+      name: 'personnalCenter',
+      component: personnalCenter
+    },
+    {
+      path: '/answer',
+      name: 'answer',
+      component: answer
+    },
+    { 
+      path: '*',
+      component: NotFoundComponent
     }
   ]
 })

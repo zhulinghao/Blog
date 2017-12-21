@@ -1,8 +1,7 @@
 <template>
     <div class="article_detail_content">
-       <div>{{title}}</div>
+       <div class="title">{{title}}</div>
        <div v-html="content" class="content">
-
        </div>
     </div>
 </template>
@@ -37,6 +36,17 @@
 
 <style scoped>
     .article_detail_content {
-        padding: 0 20%;
+        margin: 0 20%;
+        background: #fff;
+    }
+    .title {
+        margin: 0 auto;
+        padding-top: 20px;
+        text-align: center;
+        font-size: 30px
+    }
+    .content {
+        padding: 0 10px;
+        overflow: hidden
     }
 </style>

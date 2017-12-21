@@ -2,8 +2,8 @@
   <div>
     <el-container class="homeContainer">
         <el-main>
-          <mainHeader/>
-          <homeCard :articles='articles'></homeCard>
+          <mainHeader :loginStatic="loginStatic"/>
+          <homeCard :articles='articles' :loginStatic="loginStatic"></homeCard>
         </el-main>
         <el-aside width="30%">
           <homeAsideCard/>
@@ -27,6 +27,11 @@ export default {
     homeAsideCard,
     homeAsideMeanu,
     mainHeader
+  },
+  props: {
+    loginStatic: {
+      required: true
+    }
   },
   data () {
     return {
