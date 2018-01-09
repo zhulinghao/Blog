@@ -19,6 +19,7 @@ import homeCard from '@/components/homeCard.vue'
 import homeAsideCard from '@/components/homeAsideCard.vue'
 import homeAsideMeanu from '@/components/homeAsideMeanu.vue'
 import {getArticle} from '@/api/article.js'
+import moment from 'moment'
 
 export default {
   name: 'home',
@@ -40,8 +41,11 @@ export default {
   },
   created() {
     getArticle().then( (req) => {
-      this.articles = req.data
-      console.log(this.articles,"aaaaaaaaa")
+      let tmpData = req.data
+      tmpData.forEach(item => {
+          item.createdAt = moment(item.createdAt).format('YYYY/MM/DD')
+      })
+      this.articles = tmpData
     }).catch((error) => {
       console.warn(error)
     })

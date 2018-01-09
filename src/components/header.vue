@@ -7,10 +7,16 @@
     <div class="logo">YUYAN</div>
     <el-menu-item index="1"><router-link to="/">首页</router-link></el-menu-item>
     <el-menu-item index="2"><router-link to="/detail">开发TEST</router-link></el-menu-item>
-    <el-menu-item index="3">话题</el-menu-item>
-    <el-menu-item index="4"><el-input size='small' v-model="input" placeholder="请输入内容"></el-input></el-menu-item>  
+    <el-menu-item index="3"><router-link to="/topic">话题</router-link></el-menu-item>
+    <el-menu-item index="4">
+      <el-input size='small' 
+      v-model="searchValue" 
+      placeholder="请输入内容" 
+      suffix-icon="el-icon-search" 
+      @keyup.enter.native="search"></el-input>
+    </el-menu-item>  
     <el-menu-item index="6" v-show="loginStatic.isNotLogin"><router-link to="/reg">注册/登陆</router-link></el-menu-item>
-    <el-menu-item index="6" v-show="loginStatic.isLogin"><router-link to="/personnalCenter">用户中心</router-link></el-menu-item>
+    <el-menu-item index="6" v-show="loginStatic.isLogin"><router-link :to="{ name:'personnalCenter', params: {uid: loginStatic.uid, tab: 'first'} }">用户中心</router-link></el-menu-item>
     <el-menu-item index="6" v-show="loginStatic.isLogin" @click="logOut">注销</el-menu-item>
   </el-menu>
 </template>
@@ -20,8 +26,7 @@ export default {
   data() {
     return {
       activeIndex: '1',
-      activeIndex2: '2',
-      input: '',
+      searchValue: '',
     };
   },
   props: {
@@ -35,6 +40,10 @@ export default {
   methods: {
     logOut() {
       this.$emit('logOut')
+    },
+    search() {
+      console.log(this.searchValue)
+      this.$router.push({ path: `/search/${this.searchValue}/first`})
     }
   }
 }

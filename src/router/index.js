@@ -9,6 +9,9 @@ import personnalCenter from '@/views/personnalCenter'
 import NotFoundComponent from '@/views/NotFoundComponent'
 import game from '@/views/game/game.vue'
 import answer from '@/views/answer'
+import answerDetail from '@/views/answerDetail'
+import topic from '@/views/topic'
+import search from '@/views/search'
 
 Vue.use(Router)
 
@@ -45,12 +48,12 @@ export default new Router({
       component: write
     },
     {
-      path: '/articleDetail/:aid',
+      path: '/articleDetail/:aid/:upic/:username/:createdAt/:uid',
       name: 'articleDetail',
       component: articleDetail
     },
     {
-      path: '/personnalCenter',
+      path: '/personnalCenter/:uid/:tab',
       name: 'personnalCenter',
       component: personnalCenter
     },
@@ -58,6 +61,21 @@ export default new Router({
       path: '/answer',
       name: 'answer',
       component: answer
+    },
+    {
+      path: '/answerDetail/:answerid',
+      name: 'answerDetail',
+      component: answerDetail
+    },
+    {
+      path: '/topic',
+      name: 'topic',
+      component: topic
+    },
+    {
+      path: '/search/:value/:tab',
+      name: 'search',
+      component: search
     },
     { 
       path: '*',

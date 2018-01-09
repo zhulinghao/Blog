@@ -1,12 +1,13 @@
 const model = require('../model');
-let User = model.User;
+let {User} = model.AllModels;
 module.exports = {
     'POST /api/reg': async (ctx, next) => {
         let back = "";
         let tmpData = {
             username: ctx.request.body.username,
             password: ctx.request.body.password,
-            pic: ctx.request.body.pic,
+            pic: '../../static/avatar/default.jpg',
+            description: '这个人很懒，什么都没留下',
             gender: ctx.request.body.gender
         };
         ctx.response.type = 'application/json';
@@ -14,16 +15,16 @@ module.exports = {
             'username': tmpData.username
         } });
         if (username.length != 0) {
-            back = "用户已存在"
+            back = false
         } else {
             let reg = await User.create({
                 username: tmpData.username,
                 password: tmpData.password,
                 pic: tmpData.pic,
-                gender: tmpData.gender
+                gender: tmpData.gender,
+                description: tmpData.description
             })
-            console.log(reg,"regggggg");
-            back = "注册成功";
+            back = true;
         }
         ctx.response.body = back;
     },
@@ -49,17 +50,16 @@ module.exports = {
             'username': ctx.request.body.username
         }});
         let uid = username[0].id
-        //登录验证
+        //登录验证   登录成功返回  1  密码错误返回 2   用户不存在返回 3   不允许重复登录返回 4
         let tmpData = {
             username: ctx.request.body.username,
             password: ctx.request.body.password
         }
         if(ctx.session.isLogin) {
-            back = "请勿重复登录"
+            back = 4
         }
         else if(username.length == 0) {
-            console.log("用户不存在")
-            back = "用户不存在"
+            back = 3
         } else {
             let password = await User.findAll({
                 where: {
@@ -68,26 +68,40 @@ module.exports = {
                 }
             });
             if(password.length == 0) {
-                console.log("密码错误")
-                back = "密码错误"
+                back = 2
             } else {
                 let session = ctx.session
                 session.isLogin = true
                 session.username = tmpData.username
                 session.uid = uid 
-                back = '登录成功'
+                back = 1
             }
         }
         ctx.response.body = back;
     },
     'GET /api/examine': async (ctx, next) => {
         ctx.response.type = 'application/json';
-        let back = {
-            uid: ctx.session.uid,
-            username: ctx.session.username,
-            isLogin: ctx.session.isLogin
+        let back
+        let user = await User.findAll({
+            where: {
+                id: ctx.session.uid
+            }
+        })
+        if (user[0]) {
+            back = {
+                uid: ctx.session.uid,
+                username: ctx.session.username,
+                isLogin: ctx.session.isLogin,
+                upic: user[0].pic
+            }
+        } else {
+            back = {
+                uid: ctx.session.uid,
+                username: ctx.session.username,
+                isLogin: ctx.session.isLogin,
+                upic: 'nonono'
+            }
         }
-        console.log(back)
         ctx.response.body = back;
     }
 };

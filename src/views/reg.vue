@@ -1,67 +1,57 @@
 <template>
-  <div class="block">
-    <h1 class="head"><router-link to="/home">YUYAN</router-link></h1>
-    <p class="subhead">学会分享，想点新的</p>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="注册" name="first">
-          <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm">
+  <div class="bigBlock">
+    <div class="block">
+      <h1 class="head"><router-link to="/home">YUYAN</router-link></h1>
+      <p class="subhead">学会分享，想点新的</p>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="注册" name="first">
+            <el-form :model="regForm" :rules="rules" ref="regForm" class="demo-ruleForm" id='form'>
+              <el-form-item prop="username">
+                <el-input v-model="regForm.username" placeholder="UserName"></el-input>
+              </el-form-item>
+              <el-form-item prop="password">
+                <el-input type="password" v-model="regForm.password" placeholder="PassWord"></el-input>
+              </el-form-item>
+              <el-form-item prop="gender">
+                  <el-radio v-model="regForm.gender" border label="0">男孩子</el-radio>
+                  <el-radio v-model="regForm.gender" border label="1">女孩子</el-radio>
+                  <el-radio v-model="regForm.gender" border label="2"> 其他</el-radio>
+              </el-form-item>
+              <el-form-item>
+                <el-button class="regButton" type="primary" @keyup.13="submitForm('regForm')" @click="submitForm('regForm')">提交</el-button>
+              </el-form-item>
+            </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="登录" name="second">
+          <el-form :model="loginForm" :rules="loginRules" ref="loginForm" class="demo-ruleForm">
             <el-form-item prop="username">
-              <el-input v-model="ruleForm.username" placeholder="UserName"></el-input>
+              <el-input v-model="loginForm.username" placeholder="UserName"></el-input>
             </el-form-item>
             <el-form-item prop="password">
-              <el-input v-model="ruleForm.password" placeholder="PassWord"></el-input>
+              <el-input type="password" v-model="loginForm.password" placeholder="PassWord"></el-input>
             </el-form-item>
-            <el-form-item prop="gender">
-                <el-input v-model="ruleForm.gender" placeholder="gender"></el-input>
-              </el-form-item>
-            <el-form-item prop="pic">
-               <!-- <el-upload
-                v-model="ruleForm.pic"
-                class="avatar-uploader"
-                action="http://localhost:5000/api/addAvatar"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload">
-                <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-              </el-upload> -->
-              <el-input v-model="ruleForm.pic" placeholder="pic"></el-input>
-              </el-form-item>
             <el-form-item>
-              <el-button class="regButton" type="primary" @keyup.13="submitForm('ruleForm')" @click="submitForm('ruleForm')">提交</el-button>
+              <el-button class="regButton" type="primary" @click="login('loginForm')">登录</el-button>
             </el-form-item>
           </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="登录" name="second">
-        <el-form :model="loginForm" :rules="loginRules" ref="loginForm" class="demo-ruleForm">
-          <el-form-item prop="username">
-            <el-input v-model="loginForm.username" placeholder="UserName"></el-input>
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input v-model="loginForm.password" placeholder="PassWord"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button class="regButton" type="primary" @keyup.13="submitForm('ruleForm')" @click="login('loginForm')">登录</el-button>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane>
-    </el-tabs>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </div>
 </template>
 
 <script>
+  import $ from 'jquery'
   import moment from 'moment'
   import axios from '../utils/axiosService'
   export default {
     data() {
       return {
         activeName: 'first',
-        imageUrl: '',
-        ruleForm: {
+        regForm: {
           username: '',
           password: '',
-          gender: '',
-          pic: ''
+          gender: '0'
         },
         loginForm:{
           username: '',
@@ -77,9 +67,6 @@
           ],
           gender: [
             { required: true, message: '性别是必填项', trigger: 'blur' },
-          ],
-          pic: [
-            { required: true, message: '必须有一个自己的头像哦', trigger: 'blur' },
           ]
         },
         loginRules: {
@@ -93,6 +80,9 @@
         }
       };
     },
+    created() {
+
+    },
     methods: {
       handleClick(tab, event) {
           console.log(tab, event);
@@ -101,13 +91,23 @@
         let that = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            const data = this.ruleForm
-            axios.post("/api/reg",data).then(function (req) {
-              that.$message({
-                message: req.data,
-                type: 'success'
-              })
-              that.activeName = 'second'
+            axios.post("/api/reg",this.regForm).then(function (req) {
+              if (req.data) {
+                that.$message({
+                  message: '注册成功',
+                  type: 'success'
+                })
+                that.activeName = 'second'
+                that.$refs[formName].resetFields()
+              } else {
+                that.$message({
+                  message: '用户已存在',
+                  type: 'error'
+                })
+                that.$refs[formName].resetFields()
+              }
+            }).catch((error) => {
+                console.warn(error)
             })
           } else {
             that.$message({
@@ -125,11 +125,29 @@
             const data = this.loginForm
             console.log(data,"data");
             axios.post("/api/login",data).then(function (req) {
-              that.$message({
-                message: req.data,
-                type: 'success'
-              })
-              that.$router.push({ path: '/home'})
+              //登录成功返回  1  密码错误返回 2   用户不存在返回 3   不允许重复登录返回 4
+              if (req.data == 1) {
+                that.$message({
+                  message: '登陆成功',
+                  type: 'success'
+                })
+                that.$router.push({ path: '/home'})
+              } else if(req.data == 2){
+                  that.$message({
+                    message: '密码错误',
+                    type: 'error'
+                  })
+              } else if(req.data == 3){
+                  that.$message({
+                    message: '用户不存在',
+                    type: 'error'
+                  })
+              }else if(req.data == 4){
+                  that.$message({
+                    message: '请勿重复登录',
+                    type: 'error'
+                  })
+              }
             })
           } else {
             that.$message({
@@ -142,26 +160,6 @@
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
-      },
-      handleAvatarSuccess(res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw);
-        this.ruleForm.pic = this.imageUrl
-        console.log(this.imageUrl,"this.imageUrl.......................")
-      },
-      beforeAvatarUpload (file) {
-        const extension = file.name.split('.')[1] === 'png'
-        const extension2 = file.name.split('.')[1] === 'jpg'
-        console.log(file.name,"file name....")
-        console.log(moment().format('YYYYMMDDhhmmss'),"aaaaaaaaa");
-        const isLt2M = file.size / 1024 / 1024 < 2
-        if (!extension && !extension2) {
-          alert("'上传头像只能是 png、jpg 格式!'")
-        }
-        if (!isLt2M) {
-          alert("上传模板大小不能超过 2MB!")
-        }
-        this.pic = moment().format('YYYYMMDDhhmmss') + `.${file.name.split('.')[1]}`
-        return extension || extension2 && isLt2M
       }
     }
   }
@@ -197,6 +195,13 @@
     transform: translate(-50%, 0);
     top: 10%;
     left: 50%;
+    background: #fff;
+  }
+  .bigBlock {
+    position: relative;
+    background: #fff;
+    width: 100%;
+    height: 900px;
   }
   .el-tabs__nav {
     left: 50%;
@@ -223,4 +228,5 @@
     display: block;
     width: 100%;
   }
+
 </style>

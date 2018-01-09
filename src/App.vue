@@ -27,7 +27,8 @@ export default {
         isLogin: false,
         isNotLogin: true,
         username: '',
-        uid: ''
+        uid: '',
+        upic: ''
       },
       showToTop: false
     }
@@ -35,7 +36,7 @@ export default {
   created() {
     this.userExamine()
     let path = this.$route.path
-    if(path == '/reg' || path == '/write') {
+    if(path == '/reg' || path == '/write' ) {
       this.showHeader = false
     } else if(path == '/detail' || path == '/home'){
       this.showHeader = true
@@ -45,7 +46,6 @@ export default {
     '$route' (to, from) {
       if (to.name === 'reg') {
         this.showHeader = false
-        console.log('func uuuuuuuuuuuuuuuuuuuuu')
       } else if (to.name === 'write') {
         this.showHeader = false
       } else if (to.name === 'home'){
@@ -68,12 +68,13 @@ export default {
           this.loginStatic.isNotLogin = false
           this.loginStatic.username = tmpData.username
           this.loginStatic.uid = tmpData.uid
+          this.loginStatic.upic = tmpData.upic
         } else {
           this.loginStatic.isLogin = false
           this.loginStatic.isNotLogin = true
         }
       }).catch((error) => {
-        console.log("错啦错啦")
+        console.log(error)
       })
     },
     handleScroll() {
@@ -105,14 +106,18 @@ export default {
 }
 </script>
 <style>
+  html,body{height:100%;}
+  body {
+    background: #f3f3f3;
+  }
   .toTop {
-    color: #0593d3;
+    color: rgb(133, 144, 166);
     height: 35px;
     width: 40px;
     position: fixed;
     bottom: 80px;
     right: 80px;
-    border: 1px solid #0593d3;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
     border-radius: 5px;
     background: #fff;
     text-align: center;
@@ -120,6 +125,7 @@ export default {
   }
   .toTop:hover {
     cursor: pointer;
+    background: rgba(133, 144, 166,.3);
   }
   h1,h2,h3,body {
     margin: 0;
@@ -128,9 +134,6 @@ export default {
   #app {
     height: auto;
     min-height: auto;
-  }
-  body {
-    background: #f3f3f3;
   }
   .container {
     padding: 0 15%;
@@ -145,5 +148,10 @@ export default {
   }
   a:hover {
     color: #0f88eb;
+  }
+  /* elment ui style change */
+  .el-tabs__item {
+    font-weight: 700 !important;
+    font-size: 14px;
   }
 </style>

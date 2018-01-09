@@ -12,7 +12,7 @@
                 </el-button>
             </el-col>
             <el-col :span="4" class="main_header_item">
-                <el-button @click="toAnswer">
+                <el-button :disabled="!loginStatic.isLogin" @click="toAnswer">
                     <i class="el-icon-tickets" style="margin-right: 5px"></i>回答
                 </el-button>
             </el-col>
@@ -31,7 +31,7 @@
                         <el-input v-model="questionForm.topic" placeholder="添加话题"></el-input>
                     </el-form-item>
                     <el-form-item label="问题描述（可选）：" prop="content">
-                        <el-input type="textarea" v-model="questionForm.cpntent"></el-input>
+                        <el-input type="textarea" v-model="questionForm.content"></el-input>
                     </el-form-item>
                 </el-form>
             </span>
@@ -44,13 +44,15 @@
 </template>
 
 <script>
+    import axios from '../utils/axiosService'
     export default {
         data() {
             return {
                 dialogVisible: false,
                 questionForm: {
                     questionTitle: '',
-                    topic: ''
+                    topic: '',
+                    content: ''
                 }
             };
         },
@@ -60,6 +62,23 @@
             }
         },
         methods: {
+            login() {
+                let that = this
+                let data = {
+                    title: this.questionForm.questionTitle,
+                    topic: this.questionForm.topic,
+                    content: this.questionForm.content,
+                    uid: this.loginStatic.uid,
+                    username: this.loginStatic.username
+                }
+                this.dialogVisible = false
+                axios.post("/api/addAnsewer",data).then(function (req) {
+                    that.$message({
+                        message: '提问成功',
+                        type: 'success'
+                    })
+                })
+            },
             toWrite() {
                 if (this.loginStatic.isLogin) {
                     this.$router.push({ path: '/write'})

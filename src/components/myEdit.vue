@@ -49,7 +49,7 @@
         })
       },
       methods: {
-        getContent: function () {
+        getContent() {
           console.log(this.value)
           let that = this;
           alert(this.editorContent)
