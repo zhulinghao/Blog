@@ -1,22 +1,37 @@
 <template>
-    <div style="margin: 0 15%;">
-        <answerMain class="answer_main" :answers="answers"/>
+    <div>
+        <div class="topBlock">
+            <myHeader :privateMessageData='privateMessageData' :loginStatic='loginStatic' @logOut="logOut"/>
+        </div>
+        <div style="margin: 0 15%;">
+            <answerMain class="answer_main" :answers="answers"/>
+        </div>
     </div>
 </template>
 
 <script>
 import moment from 'moment'
+import myHeader from '@/components/header.vue'
 import answerMain from '@/components/answerMain.vue'
 import axios from '../utils/axiosService'
 export default {
     name: 'answer',
     components: {
-        answerMain
+        answerMain,
+        myHeader
     },
     data () {
-    return {
-        answers: ''
-    }
+        return {
+            answers: ''
+        }
+    },
+    props: {
+        privateMessageData: {
+            required: true
+        },
+        loginStatic: {
+            required: true
+        }
     },
     created() {
         axios.get('/api/getAnswers').then(req => {
@@ -32,6 +47,9 @@ export default {
         })
     },
     methods: {
+        logOut() {
+             this.$emit('logOut')
+        }
     }
 }
 </script>

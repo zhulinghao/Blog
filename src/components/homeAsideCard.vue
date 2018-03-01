@@ -1,9 +1,18 @@
 <template>
-      <el-carousel width="100%" height="200px" :interval="5000" arrow="always">
-          <el-carousel-item v-for="item in 4" :key="item">
-            <h3>{{ item }}</h3>
+      <el-carousel class="home_carousel" width="100%" height="200px" :interval="5000" arrow="always">
+          <el-carousel-item>
+            <img src="../../static/home/lb4.jpg" alt="">
           </el-carousel-item>
-        </el-carousel>
+          <el-carousel-item>
+              <img src="../../static/home/lb3.jpg" alt="">
+          </el-carousel-item>
+          <el-carousel-item>
+              <img src="../../static/home/lb2.jpg" alt="">
+          </el-carousel-item>
+          <el-carousel-item>
+              <img src="../../static/home/lb1.jpg" alt="">
+          </el-carousel-item>
+      </el-carousel>
 </template>
 
 <style>
@@ -25,5 +34,9 @@
 
 .el-carousel__item:nth-child(2n+1) {
   background-color: #d3dce6;
+}
+.home_carousel img {
+  height: 200px;
+  width: 100%;
 }
 </style>

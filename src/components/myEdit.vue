@@ -2,9 +2,9 @@
   <div>
       <div style="margin-bottom: 20px;">
           <el-input v-model="title" placeholder="输入文章标题" label="标题：" style="margin-bottom:15px;"></el-input>
-          <el-select v-model="value" placeholder="文章类型">
+          <el-select v-model="value" placeholder="选择话题">
               <el-option
-                  v-for="item in articleType"
+                  v-for="item in topicOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -19,7 +19,6 @@
 </template>
 
 <script>
-  import {getArticleType} from '@/api/article.js'
   import axios from '../utils/axiosService'
   import moment from 'moment'
     import E from 'wangeditor'
@@ -28,7 +27,7 @@
         return {
           editorContent: '',
           title: '',
-          articleType: '',
+          topicOptions: [],
           value: ''
         }
       },
@@ -38,21 +37,22 @@
         }
       },
       created() {
-        getArticleType().then( (req) => {
-          let tmpData = []
-          req.data.forEach(x => {
-            tmpData.push({value: x.id,label: x.type})
-          })
-          this.articleType = tmpData
+        axios.get('/api/getTopics').then((res) => {
+            let tmp = res.data
+            tmp.forEach(element => {
+                let item = {
+                    label: element.title,
+                    value: element.title
+                }
+                this.topicOptions.push(item)
+            });
         }).catch((error) => {
-          console.warn(error)
+            console.log(error)
         })
       },
       methods: {
         getContent() {
-          console.log(this.value)
           let that = this;
-          alert(this.editorContent)
           if (this.editorContent.length > 500) {
             const data = {
               content: this.editorContent,
@@ -79,9 +79,8 @@
     }
 </script>
 
-<style scoped>
+<style>
   .edit_button {
     margin: 10px auto; 
   }
-  
 </style>

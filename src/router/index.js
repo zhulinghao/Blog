@@ -7,11 +7,15 @@ import write from '@/views/write'
 import articleDetail from '@/views/articleDetail'
 import personnalCenter from '@/views/personnalCenter'
 import NotFoundComponent from '@/views/NotFoundComponent'
-import game from '@/views/game/game.vue'
 import answer from '@/views/answer'
 import answerDetail from '@/views/answerDetail'
 import topic from '@/views/topic'
-import search from '@/views/search'
+import search from '@/views/search' 
+import topicDetail from '@/views/topicDetail'
+import privateMessageDetail from '@/views/privateMessageDetail'
+import adminHome from '@/views/admin/adminHome'
+import admin from '@/views/admin/admin'
+import todoList from '@/views/todoList'
 
 Vue.use(Router)
 
@@ -26,11 +30,6 @@ export default new Router({
       path: '/home',
       name: 'home',
       component: home
-    },
-    {
-      path: '/game',
-      name: 'game',
-      component: game
     },
     {
       path: '/detail',
@@ -53,7 +52,7 @@ export default new Router({
       component: articleDetail
     },
     {
-      path: '/personnalCenter/:uid/:tab',
+      path: '/personnalCenter/:uid/:who/:tab',
       name: 'personnalCenter',
       component: personnalCenter
     },
@@ -76,6 +75,31 @@ export default new Router({
       path: '/search/:value/:tab',
       name: 'search',
       component: search
+    },
+    {
+      path: '/topicDetail/:topic/:tab',
+      name: 'topicDetail',
+      component: topicDetail
+    },
+    {
+      path: '/privateMessageDetail/:uid',
+      name: 'privateMessageDetail',
+      component: privateMessageDetail
+    },
+    {
+      path: '/todoList',
+      name: 'todoList',
+      component: todoList
+    },
+    {
+      path: '/adminHome/:password/:tab',
+      name: 'adminHome',
+      component: adminHome
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: admin
     },
     { 
       path: '*',

@@ -1,22 +1,21 @@
 <template>
     <div class="main_header_block">
-        <el-row>
-            <el-col :span="4" class="main_header_item">
+            <div class="main_header_item">
                     <el-button :disabled="!loginStatic.isLogin" @click="toWrite">
                         <i class="el-icon-edit-outline" style="margin-right: 5px"></i>写文章
                     </el-button>
-            </el-col>
-            <el-col :span="4" class="main_header_item">
+            </div>
+            <div class="main_header_item">
                 <el-button :disabled="!loginStatic.isLogin" @click="dialogVisible = true">
                     <i class="el-icon-question" style="margin-right: 5px"></i>提问
                 </el-button>
-            </el-col>
-            <el-col :span="4" class="main_header_item">
+            </div>
+            <div class="main_header_item">
                 <el-button :disabled="!loginStatic.isLogin" @click="toAnswer">
                     <i class="el-icon-tickets" style="margin-right: 5px"></i>回答
                 </el-button>
-            </el-col>
-        </el-row>
+            </div>
+            <div style="clear: both"></div>
         <el-dialog
             title="QUESTION"
             :visible.sync="dialogVisible"
@@ -28,7 +27,14 @@
                         <el-input v-model="questionForm.questionTitle" placeholder="问题标题"></el-input>
                     </el-form-item>
                     <el-form-item prop="topic">
-                        <el-input v-model="questionForm.topic" placeholder="添加话题"></el-input>
+                        <el-select v-model="questionForm.topic" placeholder="请选择" style="width:100%">
+                            <el-option
+                                v-for="item in topicOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="问题描述（可选）：" prop="content">
                         <el-input type="textarea" v-model="questionForm.content"></el-input>
@@ -37,7 +43,7 @@
             </span>
             <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="login('loginForm')">提 交</el-button>
+            <el-button type="primary" @click="addAnsewer('loginForm')">提 交</el-button>
             </span>
         </el-dialog>
     </div> 
@@ -53,7 +59,8 @@
                     questionTitle: '',
                     topic: '',
                     content: ''
-                }
+                },
+                topicOptions: []
             };
         },
         props: {
@@ -61,8 +68,22 @@
                 required: true
             }
         },
+        created() {
+            axios.get('/api/getTopics').then((res) => {
+                let tmp = res.data
+                tmp.forEach(element => {
+                    let item = {
+                        label: element.title,
+                        value: element.title
+                    }
+                    this.topicOptions.push(item)
+                });
+            }).catch((error) => {
+                console.log(error)
+            })
+        },
         methods: {
-            login() {
+            addAnsewer() {
                 let that = this
                 let data = {
                     title: this.questionForm.questionTitle,
@@ -71,13 +92,23 @@
                     uid: this.loginStatic.uid,
                     username: this.loginStatic.username
                 }
-                this.dialogVisible = false
-                axios.post("/api/addAnsewer",data).then(function (req) {
-                    that.$message({
-                        message: '提问成功',
-                        type: 'success'
+                if (data.title != '' && data.topic != '' && data.content != '') {
+                    this.dialogVisible = false
+                    axios.post("/api/addAnsewer",data).then(function (req) {
+                        that.$message({
+                            message: '提问成功',
+                            type: 'success',
+                            duration: 1000
+                        })
                     })
-                })
+                } else {
+                    this.$message({
+                        message: '请把信息填写完全',
+                        type: 'error',
+                        duration: 1000
+                    })
+                }
+                
             },
             toWrite() {
                 if (this.loginStatic.isLogin) {
@@ -99,5 +130,9 @@
         border: 1px solid #e6ebf5;
         box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
     }
-    
+    .main_header_item {
+        float: left;
+        margin-right: 15px;
+
+    }
 </style>

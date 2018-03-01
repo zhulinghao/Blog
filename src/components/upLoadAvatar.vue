@@ -1,8 +1,7 @@
 <template>
     <div>
-        {{uid}}
         <form id="form" enctype="multipart/form-data">
-        <div class="file"><div v-show='!showImg'>+</div><img v-show='showImg' v-bind:src='imageUrl' style="height:150px; width:150px;">
+        <div class="file"><div v-show='!showImg'>+</div><img v-show='showImg' v-bind:src='imageUrl' style="height:70px; width:70px;">
             <input type="file" @change="upload($event)" name="avatar" id="file">
         </div>
         </form>
@@ -27,6 +26,9 @@ created() {
 props: {
     uid: {
         required: true
+    },
+    upic: {
+        required: true
     }
 },
 methods: {
@@ -35,6 +37,7 @@ methods: {
     let config = {'Content-Type': 'multipart/form-data'}
     let formData = new FormData($('#form')[0])
     formData.append('uid',this.uid)
+    formData.append('upic', this.upic)
     let f = ev.target.files[0]
     if(f) {
         let tmp = f.name.split('.')
@@ -50,8 +53,12 @@ methods: {
         r.onload=function  (e) {
             that.imageUrl = this.result
         }
-        axios.post('/api/updataAvatar',formData,config).then(req => {
-            console.log(req.data)
+        axios.post('/api/updataAvatar',formData,config).then(res => {
+            that.$message({
+                message: "头像更新成功",
+                type: 'success',
+                duration: 1000
+            })
         }).catch((error) => {
             console.warn(error)
         })
@@ -67,13 +74,13 @@ methods: {
     font-size: 40px;
     color: gray;
     text-align: center;
-    line-height: 150px;
+    line-height: 70px;
     border: 1px dashed #d9d9d9;
     border: rgb(217, 217, 217);
     border-style: dashed;
     border-radius: 6px;
-    height: 150px;
-    width: 150px;
+    height: 70px;
+    width: 70px;
     padding: 0;
     position: relative;
     display: inline-block;
@@ -83,7 +90,7 @@ methods: {
 }
 .file input {
     position: absolute;
-    font-size: 150px;
+    font-size: 70px;
     right: 0;
     top: 0;
     opacity: 0;

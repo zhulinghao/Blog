@@ -28,7 +28,17 @@ module.exports = {
         id: db.ID,
         uid: db.STRING(100),
         aid: db.STRING(100),
-        comment: db.STRING(1000)
+        comment: db.STRING(1000),
+        username: db.STRING(100),
+        upic: db.STRING(100)
+    }),
+    AnswerComment: db.defineModel('answercomments', {
+        id: db.ID,
+        uid: db.STRING(100),
+        answerId: db.STRING(100),
+        comment: db.STRING(1000),
+        username: db.STRING(100),
+        upic: db.STRING(100)
     }),
     Question: db.defineModel('questions', {
         id: db.ID,
@@ -37,7 +47,8 @@ module.exports = {
         content: db.STRING(20000),
         username: db.STRING(100),
         description: db.STRING(100),
-        upic: db.STRING(100)
+        upic: db.STRING(100),
+        commentData: db.STRING(100)
     }),
     User: db.defineModel('users', {
         id: db.ID,
@@ -63,5 +74,12 @@ module.exports = {
         id: db.ID,
         uid: db.STRING(100),
         aid: db.STRING(100)
+    }),
+    PrivateMessage: db.defineModel('privatemessages', {
+        id: db.ID,
+        senderId: db.STRING(100),
+        toUid: db.STRING(100),
+        content: db.STRING(1000),
+        userInfo: db.STRING(10)
     })
 }

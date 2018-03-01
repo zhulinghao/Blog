@@ -4,24 +4,51 @@
         class="el-menu-vertical-demo">
         <el-menu-item index="1">
             <i class="el-icon-menu"></i>
-            <span slot="title">收藏</span>
+            <span slot="title">
+                <router-link :to="{ name:'personnalCenter', params: {uid: loginStatic.uid, who:'me', tab: 'first'} }">我的文章</router-link>
+            </span>
         </el-menu-item>
         <el-menu-item index="2">
             <i class="el-icon-menu"></i>
-            <span slot="title">关注</span>
+            <span slot="title">
+                <span slot="title">
+                    <router-link :to="{ name:'personnalCenter', params: {uid: loginStatic.uid, who:'me', tab: 'second'} }">我的回答</router-link>
+                </span>
+            </span>
         </el-menu-item>
         <el-menu-item index="3">
-            <i class="el-icon-setting"></i>
-            <span slot="title">XXXX</span>
+            <i class="el-icon-menu"></i>
+            <span slot="title">
+                <router-link :to="{ name:'personnalCenter', params: {uid: loginStatic.uid, who:'me', tab: 'third'} }">我的提问</router-link>
+            </span>
         </el-menu-item>
         <el-menu-item index="4">
-            <i class="el-icon-setting"></i>
-            <span slot="title">XXXX</span>
+            <i class="el-icon-menu"></i>
+            <span slot="title">
+                <router-link :to="{ name:'personnalCenter', params: {uid: loginStatic.uid, who:'me', tab: 'fourth'} }">我的收藏</router-link>
+            </span>
         </el-menu-item>
         </el-menu>
     </el-row>
 </template>
-      
+<script>
+export default {
+  data () {
+    return {
+
+    }
+  },
+  created() {
+  },
+  props: {
+    loginStatic: {
+        required: true
+    }
+  },
+  methods: {
+  }
+}
+</script>
 <style>
     .tac {
         margin-top: 10px;

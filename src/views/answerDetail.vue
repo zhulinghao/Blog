@@ -1,9 +1,10 @@
 <template>
     <div>
+        <div class="topBlock">
+            <myHeader :privateMessageData='privateMessageData' :loginStatic='loginStatic' @logOut="logOut"/>
+        </div>
         <div class="answer_detail_header">
             <div style="width:70%;">
-                <!-- {{loginStatic}}
-                {{answerDetail.username}} -->
                 <el-button type="primary" size="small" plain round>{{answerDetail.topic}}</el-button>
                 <h2 class="answer_detail_header_title">{{answerDetail.title}}</h2>
                 <p class="answer_detail_header_content">{{answerDetail.content}}</p>
@@ -31,7 +32,7 @@
                     <div class="question_header">
                         <div class="question_header_huida">共{{questionLen}}个回答</div>
                     </div>
-                    <questionsBlock :questions="questions"/>
+                    <questionsBlock :questions="questions" :loginStatic="loginStatic" @getQuestions="getQuestions"/>
                 </div>
             </div>
             <div class="answer_detail_abside">
@@ -53,10 +54,12 @@
 <script>
 import axios from '../utils/axiosService'
 import questionsBlock from '@/components/questionsBlock.vue'
+import myHeader from '@/components/header.vue'
 export default {
     name: 'answerDetail',
     components: {
-        questionsBlock
+        questionsBlock,
+        myHeader
     },
     data () {
         return {
@@ -90,6 +93,9 @@ export default {
     },
     props: {
         loginStatic: {
+            required: true
+        },
+        privateMessageData: {
             required: true
         }
     },
@@ -127,6 +133,9 @@ export default {
             }).catch((error) => {
                 console.log(error)
             })
+        },
+        logOut() {
+             this.$emit('logOut')
         }
     }
 }

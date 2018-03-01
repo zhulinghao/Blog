@@ -56,6 +56,7 @@ app.use(bodyParser());
 //上传
 const model = require('./model');
 let {User} = model.AllModels;
+let name = ''
 const storage = multer.diskStorage({
     destination:(req,file,cb)=>{
         cb(null,'../static/avatar')
@@ -63,15 +64,16 @@ const storage = multer.diskStorage({
     filename:(req,file,cb)=>{
         let tmp = file.originalname.split('.')
         let suffix = '.'+tmp[tmp.length - 1]
-        cb(null, Date.now()+suffix)
         name = Date.now()+suffix
+        cb(null, name)
+        
     }
 })
 const upload = multer({ storage:storage})
 router.post('/api/updataAvatar',upload.single('avatar'), async (ctx,next)=>{
     let uid = ctx.req.body.uid
     let avatar = await User.update(
-        {pic: `../../static/avatar/${name}`},
+        {pic: `/static/avatar/${name}`},
         {
             'where': {
                 id: uid
@@ -79,6 +81,8 @@ router.post('/api/updataAvatar',upload.single('avatar'), async (ctx,next)=>{
         }
     )
     ctx.response.body = name
+    //删除前头像
+    fs.unlink(`../${ctx.req.body.upic}`)
     await next()
 })
 app.use(router.routes());

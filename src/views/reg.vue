@@ -3,7 +3,7 @@
     <div class="block">
       <h1 class="head"><router-link to="/home">YUYAN</router-link></h1>
       <p class="subhead">学会分享，想点新的</p>
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName" @tab-click="handleClick" class="reg_tab">
         <el-tab-pane label="注册" name="first">
             <el-form :model="regForm" :rules="rules" ref="regForm" class="demo-ruleForm" id='form'>
               <el-form-item prop="username">
@@ -87,6 +87,9 @@
       handleClick(tab, event) {
           console.log(tab, event);
       },
+      userExamine() {
+        this.$emit('userExamine')
+      },
       submitForm(formName) {
         let that = this
         this.$refs[formName].validate((valid) => {
@@ -95,14 +98,16 @@
               if (req.data) {
                 that.$message({
                   message: '注册成功',
-                  type: 'success'
+                  type: 'success',
+                  duration: 1000
                 })
                 that.activeName = 'second'
                 that.$refs[formName].resetFields()
               } else {
                 that.$message({
                   message: '用户已存在',
-                  type: 'error'
+                  type: 'error',
+                  duration: 1000
                 })
                 that.$refs[formName].resetFields()
               }
@@ -112,7 +117,8 @@
           } else {
             that.$message({
                 message: '请把注册信息填写完全',
-                type: 'error'
+                type: 'error',
+                duration: 1000
             })
             return false;
           }
@@ -129,30 +135,36 @@
               if (req.data == 1) {
                 that.$message({
                   message: '登陆成功',
-                  type: 'success'
+                  type: 'success',
+                  duration: 1000
                 })
+                that.userExamine()
                 that.$router.push({ path: '/home'})
               } else if(req.data == 2){
                   that.$message({
                     message: '密码错误',
-                    type: 'error'
+                    type: 'error',
+                    duration: 1000
                   })
               } else if(req.data == 3){
                   that.$message({
                     message: '用户不存在',
-                    type: 'error'
+                    type: 'error',
+                    duration: 1000
                   })
               }else if(req.data == 4){
                   that.$message({
                     message: '请勿重复登录',
-                    type: 'error'
+                    type: 'error',
+                    duration: 1000
                   })
               }
             })
           } else {
             that.$message({
                 message: '请输入合适的用户名和密码',
-                type: 'error'
+                type: 'error',
+                duration: 1000
             })
             return false;
           }
@@ -203,7 +215,7 @@
     width: 100%;
     height: 900px;
   }
-  .el-tabs__nav {
+  .reg_tab .el-tabs__nav {
     left: 50%;
     transform: translate(-50%, 0) !important;
   }

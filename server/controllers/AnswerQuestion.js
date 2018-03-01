@@ -1,5 +1,5 @@
 const model = require('../model');
-let {Answer,Question,User,Topic} = model.AllModels;
+let {Answer,Question,User,Topic,AnswerComment} = model.AllModels;
 const moment = require('moment')
 module.exports = {
     'POST /api/addAnsewer':async (ctx, next) => {
@@ -20,7 +20,9 @@ module.exports = {
             answerid: ctx.request.body.answerid,
             username: '',
             upic: '',
-            description: ''
+            description: '',
+            commentData: ''
+            
         })
         ctx.response.body = "回答成功";
     },
@@ -30,6 +32,8 @@ module.exports = {
             where: {
                 answerid: aid
             }
+        })
+        let answerComments = await AnswerComment.findAll({
         })
         let getUserInfo = await User.findAll({
         })
@@ -46,6 +50,17 @@ module.exports = {
                     item.upic = userItem.pic
                 }
             })
+            item.commentData = []
+            answerComments.forEach(commentItem => {
+
+                if (commentItem.answerId == item.id) {
+                    item.commentData.push(commentItem)
+                }
+            });
+            item.commentData.sort(sortCreateTime)
+            item.commentData.forEach(item => {
+                item.createdAt = moment(item.createdAt).format('YYYY/MM/DD hh:mm')
+            })
         });
         ctx.response.body = questions;
         
@@ -59,7 +74,6 @@ module.exports = {
     'POST /api/answerDeatil':async (ctx, next) => {
         ctx.response.type = 'application/json';
         let id = ctx.request.body.id
-        console.log(id)
         let answerDetail = await Answer.findAll({
             where: {
                 id: id
@@ -67,19 +81,55 @@ module.exports = {
         })
         ctx.response.body = answerDetail;
     },
-    'POST /api/addTopic':async (ctx, next) => {
-        ctx.response.type = 'application/json';
-        let addTopic = await Topic.create({
-            title: ctx.request.body.title,
-            content: ctx.request.body.content,
-            pic: ''
-        })
-        ctx.response.body = 'success';
-    },
     'GET /api/getTopics':async (ctx, next) => {
         ctx.response.type = 'application/json';
         let getTopic = await Topic.findAll({
         })
         ctx.response.body = getTopic;
-    }
+    },
+    'POST /api/addAnswerComment':async (ctx, next) => {
+        ctx.response.type = 'application/json';
+        let addComment = await AnswerComment.create({
+            uid: ctx.request.body.uid,
+            answerId: ctx.request.body.answerId,
+            comment: ctx.request.body.comment,
+            username: ctx.request.body.username,
+            upic: 'some'
+        })
+        ctx.response.body = 'success';
+    },
+    'GET /api/getAllQuestions':async (ctx, next) => {
+        let questions = await Question.findAll({
+        })
+        let answerComments = await AnswerComment.findAll({
+        })
+        let getUserInfo = await User.findAll({
+        })
+        let sortCreateTime = (a,b) => {
+            return b.createdAt - a.createdAt
+        }
+        questions.sort(sortCreateTime)
+        questions.forEach(item => {
+            item.createdAt = moment(item.createdAt).format('YYYY/MM/DD hh:mm')
+            getUserInfo.forEach(userItem => {
+                if (item.uid == userItem.id) {
+                    item.username = userItem.username
+                    item.description = userItem.description
+                    item.upic = userItem.pic
+                }
+            })
+            item.commentData = []
+            answerComments.forEach(commentItem => {
+
+                if (commentItem.answerId == item.id) {
+                    item.commentData.push(commentItem)
+                }
+            });
+            item.commentData.sort(sortCreateTime)
+            item.commentData.forEach(item => {
+                item.createdAt = moment(item.createdAt).format('YYYY/MM/DD hh:mm')
+            })
+        });
+        ctx.response.body = questions;
+    },
 }

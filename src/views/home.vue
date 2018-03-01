@@ -1,21 +1,28 @@
 <template>
   <div>
+    <div class="topBlock">
+        <myHeader :privateMessageData='privateMessageData' :loginStatic='loginStatic' @logOut="logOut"/>
+    </div>
     <el-container class="homeContainer">
         <el-main>
           <mainHeader :loginStatic="loginStatic"/>
-          <homeCard :articles='articles' :loginStatic="loginStatic"></homeCard>
+          <homeCard :articles='articles' v-loading="loadArticle" :loginStatic="loginStatic"></homeCard>
         </el-main>
-        <el-aside width="30%">
-          <homeAsideCard/>
-          <homeAsideMeanu/>
+        <el-aside class="home_aside">
+          <div class="home_aside_blocks">
+            <homeAsideCard/>
+            <homeAsideMeanu :loginStatic="loginStatic"/>
+          </div>
         </el-aside>
-      </el-container>  
+      </el-container>
+      <div style="height: 50px;" ></div>
   </div>
 </template>
 
 <script>
 import mainHeader from '@/components/mainHeader.vue'
 import homeCard from '@/components/homeCard.vue'
+import myHeader from '@/components/header.vue'
 import homeAsideCard from '@/components/homeAsideCard.vue'
 import homeAsideMeanu from '@/components/homeAsideMeanu.vue'
 import {getArticle} from '@/api/article.js'
@@ -27,32 +34,61 @@ export default {
     homeCard,
     homeAsideCard,
     homeAsideMeanu,
-    mainHeader
+    mainHeader,
+    myHeader
   },
   props: {
     loginStatic: {
+      required: true
+    },
+    privateMessageData: {
       required: true
     }
   },
   data () {
     return {
-      articles: ''
+      articles: '',
+      articleQuantity: 3,
+      sw: true,
+      loadArticle: false,
+      allArticleQuantity: ''
     }
   },
   created() {
-    getArticle().then( (req) => {
-      let tmpData = req.data
-      tmpData.forEach(item => {
-          item.createdAt = moment(item.createdAt).format('YYYY/MM/DD')
-      })
-      this.articles = tmpData
-    }).catch((error) => {
-      console.warn(error)
-    })
+    this.GetArticle(3)
+  },
+  mounted() {
+    window.addEventListener('scroll',() => {  
+        if(document.documentElement.scrollTop + window.innerHeight >= document.documentElement.scrollHeight) {  
+          if (this.sw == true && this.articleQuantity <= this.allArticleQuantity) {
+            this.sw = false
+            this.loadArticle = true
+            this.articleQuantity = this.articleQuantity + 2
+            setTimeout(() => {
+              this.loadArticle = false
+              this.GetArticle(this.articleQuantity)
+            },1000)
+          }
+        }  
+    });  
   },
   methods: {
-    Affix () {
-      console.log(this);
+    GetArticle(articleQuantity) {
+      let that = this
+      getArticle().then((req) => {
+        let tmpData = req.data
+        tmpData.forEach(item => {
+            item.createdAt = moment(item.createdAt).format('YYYY/MM/DD')
+        })
+        this.allArticleQuantity = tmpData.length
+        this.articles = tmpData.slice(0,articleQuantity)
+        this.sw = true
+      }).catch((error) => {
+        console.warn(error)
+      })
+    },
+    logOut() {
+      this.$emit('logOut')
     }
   }
 }
@@ -66,5 +102,12 @@ export default {
   .homeContainer {
     margin-top: 10px;
     padding: 0 15%;
+  }
+  .home_aside {
+    position: relative;
+  }
+  .home_aside_blocks {
+    position: fixed;
+    width: 22%;
   }
 </style>

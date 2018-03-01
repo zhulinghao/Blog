@@ -49,6 +49,7 @@
         background: #fff;
     }
     .myEdit {
-        margin: 0 10%;
+        margin: 0 auto;
+        width: 700px;
     }
 </style>

@@ -56,8 +56,8 @@ module.exports = {
                             articleItem.username = userItem.username
                             articleItem.upic = userItem.pic                            
                             articleItem.udescription = userItem.description
+                            articleData.push(articleItem)
                         }
-                        articleData.push(articleItem)
                     })  
                 }
             });
