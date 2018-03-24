@@ -13,45 +13,32 @@
             </div>
             <div class="private_mssage_main_body">
                 <div v-for="(item,index) in privateMessageData" @click="toDetail(index)" class="private_mssage_main_body_item" v-show="!showDetail">
-                    <img :src="item[0].userInfo.senderUpic" alt="">
-                    <span class="private_mssage_main_body_item_text"><b>{{item[0].userInfo.senderUsername}}</b>: {{item[0].content}}</span>
-                    <span class="private_mssage_main_body_item_time">{{item[0].createdAt}}</span>
+                    <img :src="item[item.length - 1].userInfo.senderUpic" alt="">
+                    <span class="private_mssage_main_body_item_text"><b>{{item[item.length - 1].userInfo.senderUsername}}</b>: {{item[item.length - 1].content}}</span>
+                    <span class="private_mssage_main_body_item_time">{{item[item.length - 1].createdAt}}</span>
                 </div>
-                <div v-show="showDetail" class="private_mssage_main_body_duihua">
-                        {{detailToId}}
+                <div v-show="showDetail" class="private_mssage_main_body_duihua" ref="pmContent">
                     <div v-for="(item,index) in detailData">
                             <div v-show='item.me' class="private_mssage_main_body_item_wo">
-                                <div style="display: inline-block; position:absolute; right: 20px;">
-                                    <div class="wo_avatar">
-                                        我
+                                <div style="display: inline-block; position:absolute; right: 20px;margin-top:20px">
+                                    <div style="position: relative;height: 34px;">
+                                        <div class="wo_avatar">我</div>
+                                        <div style="position: absolute;top: 5px;font-weight: 700; right: 50px;">{{item.userInfo.senderUsername}}</div>
                                     </div>
-                                    <div style="position: absolute; top: 15px;font-weight: 700; left: 50px;">
-                                        {{item.userInfo.senderUsername}}
-                                    </div>
-                                    <div class="private_mssage_main_body_item_content">
-                                        {{item.content}}
-                                    </div>
-                                    <div class="time">
-                                        {{item.createdAt}}
-                                    </div>
+                                    <div class="private_mssage_main_body_item_content">{{item.content}}</div>
+                                    <div class="time">{{item.createdAt}}</div>
                                 </div>
                             </div>
                             <div v-show='!item.me' class="private_mssage_main_body_item_ta">                        
                                 <div class="ta_avatar">他</div>
-                                <div style="position: absolute; top: 15px;font-weight: 700; left: 50px;">
-                                    {{item.userInfo.senderUsername}}
-                                </div>
-                                <div class="private_mssage_main_body_item_content">
-                                    {{item.content}}
-                                </div>
-                                <div class="time">
-                                    {{item.createdAt}}
-                                </div>
+                                <div style="position: absolute; top: 15px;font-weight: 700; left: 50px;">{{item.userInfo.senderUsername}}</div>
+                                <div class="private_mssage_main_body_item_content">{{item.content}}</div>
+                                <div class="time">{{item.createdAt}}</div>
                             </div>
                     </div>
                 </div>
                 <div class="private_mssage_main_body_item_senderPrivateMessage" v-show="showDetail">
-                    <el-input v-model="privateMessageValue" style="width: 80%" placeholder="给他发私信"></el-input>
+                    <el-input v-model="privateMessageValue" @keyup.enter.native="senderPrivateMessage" style="width: 80%" placeholder="给他发私信"></el-input>
                     <el-button type="primary" style="width: 19%" @click="senderPrivateMessage">发送</el-button>
                 </div>
             </div>
@@ -71,10 +58,10 @@ export default {
             uid: this.$route.params.uid,
             privateMessageData: [],
             showDetail: false,
-            aaa: [],
             privateMessageValue: '',
             detailToId:'',
-            detailData: []
+            detailData: [],
+            detailIndex: ''
         }
     },
     created() {
@@ -97,6 +84,10 @@ export default {
                     });
                 });
                 this.privateMessageData = resData
+                this.toDetail(this.detailIndex)
+                setTimeout(() => {
+                    that.scrollToBottom()
+                }, 50);
                 console.log(resData)
             }).catch((error) => {
                 console.log(error)
@@ -115,12 +106,14 @@ export default {
                     this.detailToId = element
                 }
             });
+            console.log(this.detailData,"aaaaaaaaaaaaaaaaaaaa")
             this.showDetail = true
         },
         back() {
             this.showDetail = false
         },
         senderPrivateMessage() {
+            console.log(this.detailIndex)
             let that = this
             let data = {
                 senderId: this.uid,
@@ -129,15 +122,22 @@ export default {
             }
             this.privateMessageContent = ''
             axios.post('/api/addPrivateMessage',data).then((res) => {
-                that.getPrivateMessage()
-                that.$message({
+                this.getPrivateMessage()
+                this.$message({
                     message: res.data,
                     type: 'success',
                     duration: 1000
                 })
+                this.privateMessageValue = ""
             }).catch((error) => {
                 console.log(error)
             })
+        },
+        scrollToBottom () {
+            let div = this.$refs.pmContent
+            console.log(div.style,"sssddd")
+            div.scrollTop = div.scrollHeight + 120;
+            console.log(div.scrollHeight,'asdddddddd')
         }
     }
 }
@@ -219,6 +219,11 @@ export default {
         text-align: center;
         font-weight: 700
     }
+    .wo_avatar {
+        position: absolute;
+        right: 5px;
+    }
+    
     .time {
         font-size: 13px;
         color: #999;
@@ -230,11 +235,12 @@ export default {
         min-height: 100px;
     }
     .private_mssage_main_body_item_content {
-     padding: 5px;
-     background: #f3f3f3;
+     padding: 10px;
      border-radius: 10px;
-     border: 1px solid black;
+     border: 2px solid rgba(0,0,0,.1);
      margin: 10px 0;
-     display: inline-block
+     display: inline-block;
+     max-width: 600px;
+     word-wrap:break-word;
     }
 </style>

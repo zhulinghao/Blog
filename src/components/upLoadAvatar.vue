@@ -9,7 +9,7 @@
 </template>
 
 <script>
-    import $ from 'jquery'
+import $ from 'jquery'
 import axios from '../utils/axiosService'
 export default {
 components: {
@@ -23,14 +23,7 @@ data () {
 },
 created() {
 },
-props: {
-    uid: {
-        required: true
-    },
-    upic: {
-        required: true
-    }
-},
+props: ['uid','upic'],
 methods: {
     upload(ev) {
     ev.target.value == '' ? this.showImg = false : this.showImg = true
@@ -53,7 +46,7 @@ methods: {
         r.onload=function  (e) {
             that.imageUrl = this.result
         }
-        axios.post('/api/updataAvatar',formData,config).then(res => {
+        axios.post('/api/updataAvatar',formData).then(res => {
             that.$message({
                 message: "头像更新成功",
                 type: 'success',

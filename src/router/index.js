@@ -16,6 +16,10 @@ import privateMessageDetail from '@/views/privateMessageDetail'
 import adminHome from '@/views/admin/adminHome'
 import admin from '@/views/admin/admin'
 import todoList from '@/views/todoList'
+import begin from '@/views/begin'
+import bookStore from '@/views/bookStore'
+import bookStoreDetail from '@/views/bookStoreDetail'
+import myBook from '@/views/myBook'
 
 Vue.use(Router)
 
@@ -24,7 +28,12 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/home'
+      redirect: '/begin'
+    },
+    {
+      path: '/begin',
+      name: 'begin',
+      component: begin
     },
     {
       path: '/home',
@@ -100,6 +109,21 @@ export default new Router({
       path: '/admin',
       name: 'admin',
       component: admin
+    },
+    {
+      path: '/bookStore',
+      name: 'bookStore',
+      component: bookStore
+    },
+    {
+      path: '/bookStoreDetail/:id',
+      name: 'bookStoreDetail',
+      component: bookStoreDetail
+    },
+    {
+      path: '/myBook/:id',
+      name: 'myBook',
+      component: myBook
     },
     { 
       path: '*',

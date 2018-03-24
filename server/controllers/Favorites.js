@@ -9,6 +9,16 @@ module.exports = {
                 uid: data.uid,
                 aid: data.aid
         })
+        let upDataFAritcle = await Article.update(
+            {
+                fTimes:  + 1
+            },
+            {
+                where: {
+                    id: data.aid
+                }
+            }
+        )
         ctx.response.body = addFA;
     },
     'POST /api/exameFavoriteArticle': async (ctx, next) => {
@@ -30,11 +40,21 @@ module.exports = {
         ctx.response.type = 'application/json';
         let data = ctx.request.body
         let deleteFA = await FavoriteArticle.destroy({
-                where: {
-                    uid: data.uid,
-                    aid: data.aid
-                }
+            where: {
+                uid: data.uid,
+                aid: data.aid
+            }
         })
+        let upDataFAritcle = await Article.update(
+            {
+                fTimes: - 1
+            },
+            {
+                where: {
+                    id: data.aid
+                }
+            }
+        )
         ctx.response.body = '删除成功';
     },
     'POST /api/getFavoriteArticle': async (ctx, next) => {

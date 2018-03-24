@@ -13,6 +13,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "cnpm": "^5.1.1",
+    "csshake": "^1.5.3",
     "element-ui": "^2.0.4",
     "jquery": "^3.2.1",
     "js-md5": "^0.7.3",
@@ -28,6 +29,7 @@
     "material-design-icons": "^3.0.1",
     "moment": "^2.19.2",
     "mysql": "2.11.1",
+    "particles.js": "^2.0.0",
     "sequelize": "3.24.1",
     "vue": "^2.5.2",
     "vue-awesome-swiper": "^3.0.6",

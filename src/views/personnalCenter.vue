@@ -15,6 +15,7 @@
         </div>
         <el-button v-show="nowLogin" @click="editVisible = true" class="personnal_center_userInfo_button" type="primary" plain>编辑个人资料</el-button>
         <el-button v-show="!nowLogin" @click="privateMessageBlockVisible = true" class="personnal_center_sixin_button" plain>发私信</el-button>
+        <el-button v-show="!nowLogin" @click="addConcern(userInfo.id)" class="personnal_center_sixin_button" type="primary" plain>关 注</el-button>
         <!-- 修改个人信息 -->
         <el-dialog
           title="修改个人信息"
@@ -54,7 +55,7 @@
           width="30%">
           <span>
               发给私信给<b>{{userInfo.username}}</b> <br>
-              <el-input type="text" v-model="privateMessageContent" style="width: 80%"></el-input>
+              <el-input type="text" v-model="privateMessageContent" @keyup.enter.native="sendPrivateMessage" style="width: 80%"></el-input>
               <el-button @click="sendPrivateMessage" type="primary">发 送</el-button>
           </span>
           <span slot="footer" class="dialog-footer">
@@ -66,7 +67,13 @@
       <div class="personnal_center_Profile">
           <el-tabs v-model="activeName" type="border-card" class="personnal_center_ProfileMain" @tab-click="handleClick">
             <el-tab-pane label="文章" name="first">
-              <notFound v-show="mainShowNotFound.first"/>
+              <div v-for="item in dataA" class="personnal_center_ProfileMain_fa">
+                <router-link :to="{ name:'articleDetail', params: {aid: item.id,upic: item.upic,username: item.username,createdAt: item.createdAt,uid: loginStatic.uid} }">{{item.title}}</router-link>
+                <div class="personnal_center_ProfileMain_fa_txt">
+                  <span>类型：文章</span> <span>话题：{{item.articleType}}</span> <span>收藏：{{item.fTimes}}</span>
+                </div>
+              </div>
+              <notFound v-show="!dataA.length"/>
             </el-tab-pane>
             <el-tab-pane label="回答" name="second">
               <notFound v-show="mainShowNotFound.second"/>
@@ -80,7 +87,7 @@
                   <div v-for="item in dataFA" class="personnal_center_ProfileMain_fa">
                     <router-link :to="{ name:'articleDetail', params: {aid: item.id,upic: item.upic,username: item.username,createdAt: item.createdAt,uid: loginStatic.uid} }">{{item.title}}</router-link>
                     <div class="personnal_center_ProfileMain_fa_txt">
-                      <span>类型：文章</span> <span>作者：{{item.username}}</span> <span>收藏：{{item.version}}</span>
+                      <span>类型：文章</span> <span>话题：{{item.articleType}}</span> <span>作者：{{item.username}}</span> <span>收藏：{{item.fTimes}}</span>
                     </div>
                   </div>
                   <notFound v-show="mainShowNotFound.fourth_1"/>
@@ -93,13 +100,35 @@
                 </el-tab-pane>
               </el-tabs>
             </el-tab-pane>
-            <el-tab-pane label="关注" name="fifth">
-                <notFound v-show="mainShowNotFound.fifth"/>
+            <el-tab-pane label="已关注" name="fifth">
+                <div v-for="item in concern" class="follow_item">
+                    <img @click="toPersonnalDetail(item.id)" :src="item.pic" alt="" class="follow_img">
+                    <div @click="toPersonnalDetail(item.id)" class="follow_name">
+                        {{item.username}}
+                    </div>
+                    <div class="follow_description">
+                        {{item.description}}
+                    </div>
+                </div>
+                <notFound v-show="!concern.length"/>
+            </el-tab-pane>
+            <el-tab-pane label="关注我" name="six">
+                <div v-for="item in fans" class="follow_item">
+                    <img @click="toPersonnalDetail(item.id)" :src="item.pic" alt="" class="follow_img">
+                    <div @click="toPersonnalDetail(item.id)" class="follow_name">
+                        {{item.username}}
+                    </div>
+                    <div class="follow_description">
+                        {{item.description}}
+                    </div>
+                </div>
+                <notFound v-show="!fans.length"/>
             </el-tab-pane>
           </el-tabs>
       </div>
     </div>
   </div>
+  
 </template>
 
 <script>
@@ -117,6 +146,7 @@ export default {
   },
   data () {
     return {
+      dataA: [],
       editVisible: false,
       privateMessageBlockVisible: false,
       userEditForm: {
@@ -125,7 +155,7 @@ export default {
       },
       sex: '',
       activeName: this.$route.params.tab,
-      dataFA: '',
+      dataFA: [],
       uid: this.$route.params.uid,
       nowLogin: true,
       userInfo: '',
@@ -139,7 +169,9 @@ export default {
         fourth_2: true,
         fourth_3: true,
         fifth: true,
-      }
+      },
+      concern: [],
+      fans: []
     }
   },
   created() {
@@ -147,6 +179,29 @@ export default {
     this.getUserInfo()
   },
   methods: {
+    addConcern(toUid) {
+      let data = {
+        sendUid: this.loginStatic.uid,
+        toUid: toUid
+      }
+      axios.post('/api/addUconcern',data).then((res) => {
+        if (res.data === 1) {
+          this.$message({
+            message: '关注成功，可以去个人中心去看小伙伴',
+            type: 'success',
+            duration: 1000
+          })
+        } else {
+          this.$message({
+            message: '已经关注过了哦',
+            type: 'error',
+            duration: 1000
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
     editUserInfo() {
       let data = {
         gender: this.userEditForm.gender,
@@ -183,6 +238,20 @@ export default {
         uid: this.uid
       }
       let that = this
+      axios.post('/api/getDataA',data).then((res) => {
+        console.log(res.data)
+        this.dataA = res.data
+        
+      }).catch((error) => {
+        console.log(error)
+      })
+      axios.post('/api/getUconcern',data).then((res) => {
+        console.log(res.data)
+        this.concern = res.data.concern
+        this.fans = res.data.fans
+      }).catch((error) => {
+        console.log(error)
+      })
       axios.post('/api/getFavoriteArticle',data).then((res) => {
         that.dataFA =res.data
         if (res.data.length != 0) {
@@ -233,6 +302,10 @@ export default {
     },
     logOut() {
           this.$emit('logOut')
+    },
+    toPersonnalDetail(uid) {
+      this.$router.push({ path: `/personnalCenter/${uid}/others/first`})
+      location.reload()
     }
   },
   watch: {
@@ -286,7 +359,7 @@ export default {
     width: 100%;
     margin-right: 10px;
     float: left;
-    min-height: 200px;
+    min-height: 429px;
   }
   .personnal_center_Profile {
     margin-top: 10px
@@ -310,5 +383,26 @@ export default {
   .personnalCenterLabel {
     margin: 10px 0;
     font-weight: 700;
+  }
+  .follow_img {
+    position: absolute;
+    height: 70px;
+    width: 70px;
+    cursor: pointer;
+  }
+  .follow_item {
+    position: relative;
+    height: 80px;
+    border-bottom: 1px solid rgba(0, 0, 0, .1)
+  }
+  .follow_description {
+    margin-left: 100px;
+    margin-top: 10px;
+  }
+  .follow_name {
+    margin-left: 100px;
+    font-size: 20px;
+    color: #f1403c;
+    cursor: pointer;
   }
 </style>

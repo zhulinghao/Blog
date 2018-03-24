@@ -13,8 +13,8 @@
             <span style="float: right; color:#999;font-size: 13px;">发布于：{{n.createdAt}}</span>
                 <el-row class="border_bottom">
                     <el-col :span="3">
-                        <el-badge class="item">
-                            <el-button size="small" @click="sComment(index)">评论</el-button>
+                        <el-badge :value="n.commentData.length" class="item">
+                            <el-button size="small"  @click="sComment(index)">评论</el-button>
                         </el-badge>
                     </el-col>
                     <el-col :span="3">

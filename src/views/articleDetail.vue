@@ -168,7 +168,7 @@ methods: {
 .articleFavorite {
     position: absolute;
     right: 0px;
-    top: 10px;
+    top: -60px;
     cursor: pointer;
     color: gray;
 }

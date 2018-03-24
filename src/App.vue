@@ -48,6 +48,7 @@ export default {
         }
         axios.post('/api/getPrivateMessage',data).then((res) => {
           this.privateMessageData = res.data 
+          console.log(res.data,"aaaaaaaaaaaaa")
         }).catch((error) => {
             console.log(error)
         })
@@ -112,6 +113,11 @@ export default {
   html,body{height:100%;}
   body {
     background: #f3f3f3;
+    height: 100%;
+  }
+  #app {
+    height: 100% !important;
+    width: 100%;
   }
   .toTop {
     color: rgb(133, 144, 166);

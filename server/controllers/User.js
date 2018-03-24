@@ -1,4 +1,5 @@
 const model = require('../model');
+const md5 = require('js-md5');
 let {User} = model.AllModels;
 module.exports = {
     'POST /api/reg': async (ctx, next) => {
@@ -19,7 +20,7 @@ module.exports = {
         } else {
             let reg = await User.create({
                 username: tmpData.username,
-                password: tmpData.password,
+                password: md5(tmpData.password),
                 pic: tmpData.pic,
                 gender: tmpData.gender,
                 description: tmpData.description
@@ -53,7 +54,7 @@ module.exports = {
         //登录验证   登录成功返回  1  密码错误返回 2   用户不存在返回 3   不允许重复登录返回 4
         let tmpData = {
             username: ctx.request.body.username,
-            password: ctx.request.body.password
+            password: md5(ctx.request.body.password)
         }
         if(ctx.session.isLogin) {
             back = 4

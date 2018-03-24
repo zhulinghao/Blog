@@ -195,7 +195,7 @@ export default {
     }
     .search_comprehensive_main_item_content {
         overflow: hidden;
-        height: 54px;
+        height: 68px;
     }
     .search_comprehensive_main_item {
         padding: 15px;

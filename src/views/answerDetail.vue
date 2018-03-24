@@ -5,16 +5,13 @@
         </div>
         <div class="answer_detail_header">
             <div style="width:70%;">
-                <el-button type="primary" size="small" plain round>{{answerDetail.topic}}</el-button>
                 <h2 class="answer_detail_header_title">{{answerDetail.title}}</h2>
                 <p class="answer_detail_header_content">{{answerDetail.content}}</p>
                 <el-button type="primary">收藏问题</el-button>
                 <el-button @click="showWrite =false"><i class="el-icon-edit-outline"></i>写回答</el-button>
             </div>
             <div class="header_abside">
-                收藏者：x人
-                <span class="cut-off"></span>
-                浏览次数：x
+                <el-button type="primary" size="small" plain round>{{answerDetail.topic}}</el-button>
             </div>
         </div>
         <div class="answer_detail_block">
@@ -33,6 +30,7 @@
                         <div class="question_header_huida">共{{questionLen}}个回答</div>
                     </div>
                     <questionsBlock :questions="questions" :loginStatic="loginStatic" @getQuestions="getQuestions"/>
+                    <notFound v-show="!questionLen"/>
                 </div>
             </div>
             <div class="answer_detail_abside">
@@ -53,13 +51,15 @@
 
 <script>
 import axios from '../utils/axiosService'
+import notFound from '@/components/notFound.vue'
 import questionsBlock from '@/components/questionsBlock.vue'
 import myHeader from '@/components/header.vue'
 export default {
     name: 'answerDetail',
     components: {
         questionsBlock,
-        myHeader
+        myHeader,
+        notFound
     },
     data () {
         return {
@@ -69,7 +69,7 @@ export default {
             showWrite: true,
             questions: '',
             questionLen: '',
-            addOk: false
+            addOk: false,
         }
     },
     created() {

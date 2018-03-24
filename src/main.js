@@ -7,12 +7,14 @@ import App from './App'
 import router from './router'
 import axios from './utils/axiosService'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
+import yzm from './utils/yanzhengma.js'
 
 Vue.use(VueAwesomeSwiper)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
 axios.defaults.withCredentials=true
+Vue.use(yzm)
 
 // vue全局拦截器
 router.beforeEach((to, from, next) => {

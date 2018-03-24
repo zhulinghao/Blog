@@ -37,6 +37,7 @@
         }
       },
       created() {
+        this.title = moment().format('YYYY-MM-DD')
         axios.get('/api/getTopics').then((res) => {
             let tmp = res.data
             tmp.forEach(element => {
@@ -61,7 +62,7 @@
               articleType: this.value
             }
             axios.post("/api/addArticle",data).then(function (req) {
-              alert(req.data)
+              that.sucMessage('SUCCESS')
               that.$router.push({path: '/home'})
             })
           } else {

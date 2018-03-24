@@ -87,6 +87,12 @@ module.exports = {
         })
         ctx.response.body = getTopic;
     },
+    'GET /api/getAnswerComments':async (ctx, next) => {
+        ctx.response.type = 'application/json';
+        let aC = await AnswerComment.findAll({
+        })
+        ctx.response.body = aC;
+    },
     'POST /api/addAnswerComment':async (ctx, next) => {
         ctx.response.type = 'application/json';
         let addComment = await AnswerComment.create({
@@ -131,5 +137,32 @@ module.exports = {
             })
         });
         ctx.response.body = questions;
+    },
+    'POST /api/deleteQuestion': async (ctx, next) => {
+        ctx.response.type = 'application/json';
+        var affectedRows = await Answer.destroy({
+            where: {
+                id: ctx.request.body.id
+            }
+        });
+        ctx.response.body = '删除成功';
+    },
+    'POST /api/deleteAnswer': async (ctx, next) => {
+        ctx.response.type = 'application/json';
+        var affectedRows = await Question.destroy({
+            where: {
+                id: ctx.request.body.id
+            }
+        });
+        ctx.response.body = '删除成功';
+    },
+    'POST /api/deleteAnswerComment': async (ctx, next) => {
+        ctx.response.type = 'application/json';
+        var affectedRows = await AnswerComment.destroy({
+            where: {
+                id: ctx.request.body.id
+            }
+        });
+        ctx.response.body = '删除成功';
     },
 }

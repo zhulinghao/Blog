@@ -124,15 +124,14 @@
 </script>
 <style>
     .main_header_block {
-        padding: 10px 20px;
+        padding: .5rem .5rem;
         background: #fff;
-        margin-bottom: 10px;
+        margin-bottom: 1rem;
         border: 1px solid #e6ebf5;
         box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
     }
     .main_header_item {
         float: left;
-        margin-right: 15px;
-
+        margin-right: .4rem;
     }
 </style>

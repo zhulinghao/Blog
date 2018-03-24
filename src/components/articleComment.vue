@@ -4,8 +4,8 @@
             {{commentQuantity}}条评论
         </div>
         <div class="writeComment">
-            <el-input :disabled="!loginStatic.isLogin" style="width:70%" v-model="content"></el-input>
-            <el-button :disabled="!loginStatic.isLogin" @click="Published" @keyup.enter.native="Published">发表评论</el-button>
+            <el-input :disabled="!loginStatic.isLogin" style="width:70%" v-model="content" @keyup.enter.native="Published"></el-input>
+            <el-button :disabled="!loginStatic.isLogin" @click="Published" >发表评论</el-button>
         </div>
         <div class="article_comments" v-loading="loading">
             <div class="article_comment_block" v-for="item in allcomments">
@@ -68,7 +68,7 @@ methods: {
                 type: 'success',
                 duration: 1000
             })
-            taht.content = ''
+            that.content = ''
         }).catch(error => {
             console.log(error);
         });

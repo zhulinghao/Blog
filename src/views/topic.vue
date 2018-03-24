@@ -17,22 +17,21 @@
                                 {{item.content}}
                             </div>
                             <div class="topic_main_card_footer">
-                                    xxx篇文章 · xxxx人关注
-                            </div>
-                            <img src="../../static/avatar/default.jpg" alt="" class="topic_main_card_img">
+                                0人关注
+                            </div> 
+                            <img :src="item.pic" alt="" class="topic_main_card_img">
                             <el-button class="topic_main_card_button" type="text">+关注</el-button>
                         </div>
                     </div>
                 </el-tab-pane>
                 <el-tab-pane label="热门话题" name="second">热门话题</el-tab-pane>
             </el-tabs>
-    
             <el-dialog
                 title="添加话题"
                 :visible.sync="createTopicVisible"
                 width="30%">
                 <span>
-                    <el-form :model="topicAdd" ref="loginForm" class="demo-ruleForm">
+                    <el-form :model="topicAdd" ref="loginForm" class="demo-ruleForm">                      
                         <el-form-item label="话题名：" prop="questionTitle">
                             <el-input v-model="topicAdd.title" placeholder="话题名不能为空"></el-input>
                         </el-form-item>
@@ -53,10 +52,12 @@
   <script>
   import axios from '../utils/axiosService'
   import myHeader from '@/components/header.vue'
+  import notFound from '@/components/notFound.vue'
   export default {
     name: 'topic',
     components: {
-        myHeader
+        myHeader,
+        notFound,
     },
     data () {
       return {
@@ -66,7 +67,8 @@
             content: ''
         },
         createTopicVisible: false,
-        topics: ''
+        topics: '',
+        type: 'topic'
       }
     },
     created() {
@@ -188,6 +190,7 @@
     left: 50%;
     margin-left: -35px;
     top: 20px;
+    border-radius: 50%;
 }
 .add_topic {
     color: #0f88eb;

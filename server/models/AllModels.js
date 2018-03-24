@@ -18,7 +18,9 @@ module.exports = {
         title: db.STRING(100),
         upic: db.STRING(100),
         udescription: db.STRING(100),
-        username: db.STRING(100)
+        username: db.STRING(100),
+        commentTimes: db.BIGINT(20),
+        fTimes: db.BIGINT(20),
     }),
     ArticleType: db.defineModel('articleType', {
         id: db.ID,
@@ -81,5 +83,24 @@ module.exports = {
         toUid: db.STRING(100),
         content: db.STRING(1000),
         userInfo: db.STRING(10)
+    }),
+    BookStore: db.defineModel('books', {
+        id: db.ID,
+        pic: db.STRING(100),
+        name: db.STRING(100),
+        author: db.STRING(100),
+        promotion: db.STRING(100),
+        description: db.STRING(200),
+        collectionTimes: db.BIGINT(20)
+    }),
+    userConcern: db.defineModel('userConcern', {
+        id: db.ID,
+        sendUid: db.STRING(50),
+        toUid: db.STRING(50),
+    }),
+    BuyBook: db.defineModel('buybook',{
+        id: db.ID,
+        Uid: db.STRING(50),
+        bookId: db.STRING(50),
     })
 }

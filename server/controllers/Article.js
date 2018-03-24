@@ -17,16 +17,25 @@ module.exports = {
             articleType: tmpData.articleType,
             upic: '',
             udescription: '',
-            username: ''
+            username: '',
+            commentTimes: 0,
+            fTimes: 0
         })
         ctx.response.body = tmpData;
     },
     'GET /api/articleList': async (ctx, next) => {
         ctx.response.type = 'application/json';
         let articles = await Article.findAll({});
-        let getUser = await User.findAll({})
+        let getUser = await User.findAll({});
+        let comments = await Comment.findAll({});        
         articles.forEach(item => {
+            comments.forEach(cItem => {
+                if (cItem.aid == item.id) {
+                    item.commentTimes += 1
+                }
+            });
             getUser.forEach(userItem => {
+                
                 if (item.uid == userItem.id) {
                     item.username = userItem.username
                     item.upic = userItem.pic                            
