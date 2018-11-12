@@ -1,7 +1,8 @@
 # 毕业设计 by zlh
 
+[Site](https://zhu8191553.github.io/Blog/dist/)
+
 ## Build Setup
-[Site](https://zhu8191553.github.io/IFE2017/demo/build/#/)
 ``` bash
 # install dependencies
 npm install
