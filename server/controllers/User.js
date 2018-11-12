@@ -1,13 +1,15 @@
 const model = require('../model');
 const md5 = require('js-md5');
 let {User} = model.AllModels;
+
+
 module.exports = {
     'POST /api/reg': async (ctx, next) => {
         let back = "";
         let tmpData = {
             username: ctx.request.body.username,
             password: ctx.request.body.password,
-            pic: '/static/avatar/default.jpg',
+            pic: '',
             description: '这个人很懒，什么都没留下',
             gender: ctx.request.body.gender
         };
@@ -18,7 +20,7 @@ module.exports = {
         if (username.length != 0) {
             back = false
         } else {
-            let reg = await User.create({
+            await User.create({
                 username: tmpData.username,
                 password: md5(tmpData.password),
                 pic: tmpData.pic,
@@ -35,13 +37,10 @@ module.exports = {
         ctx.response.body = users;
     },
     'GET /api/logOut': async (ctx, next) => {
-        ctx.response.type = 'application/json';
         ctx.session = null
         ctx.response.body = "已成功注销";
     },
     'POST /api/addAvatar': async (ctx, next) => {
-        ctx.response.type = 'application/json';
-        console.log(ctx,"ctxxxxxxxxxxxxxxxxxxx")
         ctx.response.body = "UPDATE";
     },
     'POST /api/login': async (ctx, next) => {
@@ -50,7 +49,7 @@ module.exports = {
         let username = await User.findAll({ where: {
             'username': ctx.request.body.username
         }});
-        let uid = username[0].id
+        let uid = username[0] ? username[0].id : '';
         //登录验证   登录成功返回  1  密码错误返回 2   用户不存在返回 3   不允许重复登录返回 4
         let tmpData = {
             username: ctx.request.body.username,
@@ -59,7 +58,7 @@ module.exports = {
         if(ctx.session.isLogin) {
             back = 4
         }
-        else if(username.length == 0) {
+        else if(username.length === 0) {
             back = 3
         } else {
             let password = await User.findAll({
@@ -107,7 +106,7 @@ module.exports = {
     },
     'POST /api/deleteUser': async (ctx, next) => {
         ctx.response.type = 'application/json';
-        var affectedRows = await User.destroy({
+        await User.destroy({
             where: {
                 id: ctx.request.body.id
             }

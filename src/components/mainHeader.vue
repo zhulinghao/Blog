@@ -10,11 +10,6 @@
                     <i class="el-icon-question" style="margin-right: 5px"></i>提问
                 </el-button>
             </div>
-            <div class="main_header_item">
-                <el-button :disabled="!loginStatic.isLogin" @click="toAnswer">
-                    <i class="el-icon-tickets" style="margin-right: 5px"></i>回答
-                </el-button>
-            </div>
             <div style="clear: both"></div>
         <el-dialog
             title="QUESTION"
@@ -46,7 +41,7 @@
             <el-button type="primary" @click="addAnsewer('loginForm')">提 交</el-button>
             </span>
         </el-dialog>
-    </div> 
+    </div>
 </template>
 
 <script>
@@ -108,23 +103,19 @@
                         duration: 1000
                     })
                 }
-                
+
             },
             toWrite() {
                 if (this.loginStatic.isLogin) {
-                    this.$router.push({ path: '/write'})
+                    this.$router.push({ path: '/write/none'})
                 }
-            },
-            toAnswer() {
-                this.$router.push({ path: '/answer'})
             }
-
         }
     }
 </script>
 <style>
     .main_header_block {
-        padding: .5rem .5rem;
+        padding: .9rem 1.5rem;
         background: #fff;
         margin-bottom: 1rem;
         border: 1px solid #e6ebf5;
@@ -132,6 +123,7 @@
     }
     .main_header_item {
         float: left;
-        margin-right: .4rem;
+        margin-right: 1rem;
+        font-size: 16px;
     }
 </style>

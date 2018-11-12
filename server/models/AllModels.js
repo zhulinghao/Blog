@@ -5,10 +5,11 @@ module.exports = {
         id: db.ID,
         title: db.STRING(100),
         topic: db.STRING(100),
-        tid: db.STRING(100),        
+        tid: db.STRING(100),
         content: db.STRING(20000),
         uid: db.STRING(100),
-        username: db.STRING(100)
+        username: db.STRING(100),
+        fTimes: db.BIGINT(20)
     }),
     Article: db.defineModel('articles', {
         id: db.ID,
@@ -42,6 +43,12 @@ module.exports = {
         username: db.STRING(100),
         upic: db.STRING(100)
     }),
+    ArticleReply: db.defineModel('articlereply', {
+        id: db.ID,
+        uid: db.STRING(100),
+        cid: db.STRING(100),
+        reply: db.STRING(1000)
+    }),
     Question: db.defineModel('questions', {
         id: db.ID,
         uid: db.STRING(100),
@@ -71,11 +78,22 @@ module.exports = {
         },
         content: db.STRING(2000),
         pic: db.STRING(100),
+        fTimes: db.BIGINT(20)
+    }),
+    FavoriteTopic: db.defineModel('favoritetopics', {
+        id: db.ID,
+        uid: db.STRING(100),
+        tid: db.STRING(100)
     }),
     FavoriteArticle: db.defineModel('favoriteArticles', {
         id: db.ID,
         uid: db.STRING(100),
         aid: db.STRING(100)
+    }),
+    FavoriteQuestion: db.defineModel('favoritequestions', {
+        id: db.ID,
+        uid: db.STRING(100),
+        qid: db.STRING(100)
     }),
     PrivateMessage: db.defineModel('privatemessages', {
         id: db.ID,
@@ -98,7 +116,7 @@ module.exports = {
         sendUid: db.STRING(50),
         toUid: db.STRING(50),
     }),
-    BuyBook: db.defineModel('buybook',{
+    BuyBook: db.defineModel('buybook', {
         id: db.ID,
         Uid: db.STRING(50),
         bookId: db.STRING(50),

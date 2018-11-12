@@ -1,14 +1,22 @@
 const model = require('../model');
-let {Topic,Answer,Article,User} = model.AllModels;
+let { FavoriteTopic, Topic, Answer, Article, User } = model.AllModels;
 const moment = require('moment')
 module.exports = {
-    'GET /api/getTopics':async (ctx, next) => {
+    'POST /api/getTopics': async(ctx, next) => {
         ctx.response.type = 'application/json';
-        let Topics = await Topic.findAll({
+        let data = ctx.request.body
+        let Topics = await Topic.findAll({})
+        let fT = await FavoriteTopic.findAll({})
+        fT.forEach((fItem) => {
+            Topics.forEach((tItem) => {
+                if (fItem.uid === data.uid && tItem.id === fItem.tid) {
+                    tItem.version = 1
+                }
+            })
         })
         ctx.response.body = Topics;
     },
-    'POST /api/getTopicDetail':async (ctx, next) => {
+    'POST /api/getTopicDetail': async(ctx, next) => {
         ctx.response.type = 'application/json';
         let TopicDetail = await Topic.findAll({
             where: {
@@ -17,16 +25,17 @@ module.exports = {
         })
         ctx.response.body = TopicDetail;
     },
-    'POST /api/addTopic':async (ctx, next) => {
+    'POST /api/addTopic': async(ctx, next) => {
         ctx.response.type = 'application/json';
         let addTopic = await Topic.create({
             title: ctx.request.body.title,
             content: ctx.request.body.content,
-            pic: ''
+            pic: '/static/topic/topic.jpg',
+            fTimes: 0
         })
         ctx.response.body = 'success';
     },
-    'POST /api/getTopicAnswer':async (ctx, next) => {
+    'POST /api/getTopicAnswer': async(ctx, next) => {
         ctx.response.type = 'application/json';
         let getTopicAnswer = await Answer.findAll({
             where: {
@@ -35,7 +44,16 @@ module.exports = {
         })
         ctx.response.body = getTopicAnswer;
     },
-    'POST /api/getTopicArticle':async (ctx, next) => {
+    'POST /api/deleteTopic': async(ctx, next) => {
+        ctx.response.type = 'application/json';
+        var affectedRows = await Topic.destroy({
+            where: {
+                id: ctx.request.body.id
+            }
+        });
+        ctx.response.body = '删除成功';
+    },
+    'POST /api/getTopicArticle': async(ctx, next) => {
         ctx.response.type = 'application/json';
         let getUser = await User.findAll({})
         let getTopicArticle = await Article.findAll({
@@ -54,5 +72,16 @@ module.exports = {
             });
         });
         ctx.response.body = getTopicArticle;
+    },
+    'POST /api/updatTopic': async(ctx, next) => {
+        let updateBook = await Topic.update({
+            title: ctx.request.body.title,
+            content: ctx.request.body.content
+        }, {
+            where: {
+                id: ctx.request.body.id
+            }
+        })
+        ctx.response.body = '更新成功';
     }
 }

@@ -24,6 +24,7 @@ methods: {
 <style>
 .not_found {
     height: 300px;
+    background: #fff;
 }
 .not_found_txt {
     width: 168px;

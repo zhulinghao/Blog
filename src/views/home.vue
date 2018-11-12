@@ -6,12 +6,18 @@
     <el-container class="homeContainer">
         <el-main>
           <mainHeader :loginStatic="loginStatic"/>
-          <articleCard :articles='articles' v-loading="loadArticle" :loginStatic="loginStatic"></articleCard>
+          <notFound v-show='!articles.length' style="margin-top: -25px;box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);"></notFound>
+          <articleCard :articles='articles' :loginStatic="loginStatic"></articleCard>
+
         </el-main>
         <el-aside class="home_aside">
           <div class="home_aside_blocks">
             <homeAsideCard/>
             <homeAsideMeanu v-show="loginStatic.isLogin" :loginStatic="loginStatic"/>
+            <div class="footer">
+              <a href="https://github.com/zhu8191553">gitHub</a><a href="https://zhu8191553.github.io/">个人博客</a>
+              <p>copyright ©musashi</p>
+            </div>
           </div>
         </el-aside>
       </el-container>
@@ -21,6 +27,7 @@
 <script>
   import mainHeader from '@/components/mainHeader.vue'
   import articleCard from '@/components/articleCard.vue'
+  import notFound from '@/components/notFound.vue'
   import myHeader from '@/components/header.vue'
   import homeAsideCard from '@/components/homeAsideCard.vue'
   import homeAsideMeanu from '@/components/homeAsideMeanu.vue'
@@ -34,7 +41,8 @@
       homeAsideCard,
       homeAsideMeanu,
       mainHeader,
-      myHeader
+      myHeader,
+      notFound
     },
     props: {
       loginStatic: {
@@ -46,30 +54,25 @@
     },
     data () {
       return {
-        articles: '',
+        articles: [],
         articleQuantity: 3,
         sw: true,
-        loadArticle: false,
-        allArticleQuantity: ''
+        allArticleQuantity: []
       }
     },
     created() {
       this.GetArticle(3)
     },
     mounted() {
-      window.addEventListener('scroll',() => {  
-          if(document.documentElement.scrollTop + window.innerHeight >= document.documentElement.scrollHeight) {  
+      window.addEventListener('scroll',() => {
+          if(document.documentElement.scrollTop + window.innerHeight >= document.documentElement.scrollHeight) {
             if (this.sw == true && this.articleQuantity <= this.allArticleQuantity) {
               this.sw = false
-              this.loadArticle = true
               this.articleQuantity = this.articleQuantity + 2
-              setTimeout(() => {
-                this.loadArticle = false
-                this.GetArticle(this.articleQuantity)
-              },1000)
+              this.GetArticle(this.articleQuantity)
             }
-          }  
-      });  
+          }
+      });
     },
     methods: {
       GetArticle(articleQuantity) {
@@ -93,7 +96,7 @@
   }
 </script>
 <style>
-  @media (max-width: 768px) { 
+  @media (max-width: 768px) {
     .home_aside {
       display: none;
     }
@@ -107,6 +110,19 @@
       margin: 0;
       margin-right: 10px;
     }
+    .footer {
+      margin-top: 20px;
+      color: #8590a6;
+      padding: 10px;
+    }
+    .footer a {
+      color: #8590a6;
+      margin-right: 15px;
+    }
+    .footer a:hover {
+      color: #777;
+      transition: .3s;
+    }
     .homeContainer {
       margin-top: 10px;
       padding: 0 15%;
@@ -119,5 +135,4 @@
       width: 22%;
     }
   }
-  
 </style>

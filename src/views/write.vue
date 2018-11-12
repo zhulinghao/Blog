@@ -2,10 +2,11 @@
     <div>
         <div class="header">
             <span class="write_logo"><router-link to="/home">YUYAN</router-link></span>
-            <span style="margin-left: 200px;font-weight:800">写文章</span>
+            <span v-show="showTxt" style="margin-left: 200px;font-weight:800">写文章</span>
+            <span v-show="!showTxt" style="margin-left: 200px;font-weight:800">修改文章</span>
         </div>
         <div class="myEdit">
-            <myEdit :loginStatic="loginStatic"/>
+            <myEdit :loginStatic="loginStatic" :aid="aid"/>
         </div>
     </div>
 </template>
@@ -16,8 +17,14 @@
       name: 'write',
       data() {
           return{
-            
+            aid: this.$route.params.aid,
+            showTxt: ''
           }
+      },
+      created() {
+        if (this.aid === 'none') {
+            this.showTxt = true
+        }
       },
       components: {
         myEdit
@@ -31,9 +38,6 @@
 </script>
 
 <style scoped>
-    .write_logo {
-        
-    }
     .write_logo a {
         color: gray;
         font-size: 24px;
@@ -50,6 +54,6 @@
     }
     .myEdit {
         margin: 0 auto;
-        width: 700px;
+        width: 800px;
     }
 </style>

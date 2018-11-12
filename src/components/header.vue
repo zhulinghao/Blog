@@ -4,40 +4,40 @@
   class="el-menu-demo"
   mode="horizontal"
   text-color="#8590a6">
-    <div class="logo">YUYAN</div>
+    <div @click="toHome" class="logo">YUYAN</div>
     <el-menu-item index="1" class="header_home_item"><router-link to="/home">首页</router-link></el-menu-item>
-    <!-- <el-menu-item index="2"><router-link to="/detail">开发TEST</router-link></el-menu-item> -->
     <el-menu-item index="2" class="header_book_item"><router-link to="/bookStore">书城</router-link></el-menu-item>
     <el-menu-item index="3" class="header_topic_item"><router-link to="/topic">话题</router-link></el-menu-item>
-    <el-menu-item index="4">
-      <el-input size='small' 
+    <el-menu-item index="4" class="header_topic_item"><router-link to="/answer">回答</router-link></el-menu-item>
+    <el-menu-item index="5">
+      <el-input size='small'
         v-model="searchValue"
         class="search_input"
-        placeholder="请输入内容" 
+        placeholder="请输入内容"
         @keyup.enter.native="search">
-      <el-button class="search_input_button" slot="append" @click="search" icon="el-icon-search"></el-button>
+      <el-button class="search_input_button" slot="append" @click="search" icon="el-icon-search" type="primary"></el-button>
     </el-input>
-    <el-input size='small' 
+    <el-input size='small'
       v-model="searchValue"
       class="search_input_mobile"
-      placeholder="请输入内容" 
+      placeholder="请输入内容"
       @keyup.enter.native="search">
     </el-input>
-    </el-menu-item> 
+    </el-menu-item>
     <el-menu-item index="6" v-show="loginStatic.isNotLogin" class="header_reg_item"><router-link to="/reg">注册/登陆</router-link></el-menu-item>
     <el-menu-item index="7" v-show="loginStatic.isLogin" class="sixin">
       <el-dropdown trigger="click" placement="bottom" >
           <span class="el-dropdown-link">
-              <i class="el-icon-bell"></i><span style="color: #fa5555">({{privateMessageData.length}})</span>
+              <i class="el-icon-bell header-icon"></i><span style="color: #fa5555">({{privateMessageData.length}})</span>
           </span>
           <el-dropdown-menu slot="dropdown" class="dropdown_container">
               <div class="dropdown_head">
                 我的私信
               </div>
-              <div class="dropdown_content" @click="toDetail" v-show=privateMessageData.length v-for="item in privateMessageData">
+              <div class="dropdown_content" @click="toDetail" v-show="privateMessageData.length" v-for="item in privateMessageData" :key="item">
                 <img class="dropdown_content_img" :src="item[item.length - 1].userInfo.senderUpic">
                 <div class="dropdown_content_t">
-                  <span style="color:#0f88eb;font-size: 14px;">{{item[item.length - 1].userInfo.senderUsername}}:</span>
+                  <span style="font-size: 16px;font-weight: 700;" :class="item[item.length - 1].userInfo.senderUsername === loginStatic.username ? 'aaa' : null">{{item[item.length - 1].userInfo.senderUsername === loginStatic.username ? '我' : item[item.length - 1].userInfo.senderUsername}}</span>
                   <div class="dropdown_content_text">{{item[item.length - 1].content}}</div>
                 </div>
                 <div class="dropdown_content_time">
@@ -50,10 +50,20 @@
           </el-dropdown-menu>
         </el-dropdown>
     </el-menu-item>
-    <el-menu-item index="8" class="header_todo_item"><router-link to="/todoList">Todo List</router-link></el-menu-item>
-    <el-menu-item index="9" class="header_person_item" v-show="loginStatic.isLogin"><router-link :to="{ name:'personnalCenter', params: {uid: loginStatic.uid, who:'me', tab: 'first'} }"><img class="header-avatar" :src="loginStatic.upic" alt=""></router-link></el-menu-item>
-    <el-menu-item index="10" class="header_logout_item" v-show="loginStatic.isLogin" @click="logOut">注销</el-menu-item>
-    <el-menu-item index="11">
+    <el-menu-item index="8" class="header_person_item" v-show="loginStatic.isLogin">
+        <el-dropdown trigger="click"  placement="bottom">
+            <span class="el-dropdown-link">
+                <img class="header-avatar" :src="loginStatic.upic ? loginStatic.upic : $var.defaultAvatar">
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item><router-link :to="{ name:'personnalCenter', params: {uid: loginStatic.uid, who:'me', tab: 'first'} }">个人中心</router-link></el-dropdown-item>
+              <el-dropdown-item class="header_todo_item"><router-link to="/todoList">Todo List</router-link></el-dropdown-item>
+              <el-dropdown-item class="header_todo_item"><router-link to="/gameEat">吃豆豆(游戏)</router-link></el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+    </el-menu-item>
+    <el-menu-item index="9" v-show="loginStatic.isLogin" class="header_logout_item" @click="logOut">注销</el-menu-item>
+    <el-menu-item index="10">
         <el-dropdown>
             <i class="el-icon-menu header_moble_menu"></i>
             <el-dropdown-menu slot="dropdown">
@@ -112,6 +122,9 @@
       logOut() {
         this.$emit('logOut')
       },
+      toHome() {
+        this.$router.push({path: 'home'})
+      },
       search() {
         if (this.searchValue) {
           this.$router.push({ path: `/search/${this.searchValue}/first`})
@@ -152,6 +165,7 @@
     .logo {
       height: 60px;
       width: 5rem;
+      cursor: pointer;
       float: left;
       color: #0f88eb;
       line-height: 60px;
@@ -179,6 +193,12 @@
     }
   }
   @media (min-width: 768px) {
+    .aaa {
+      color: #fa5555;
+    }
+    .header-icon {
+      font-size: 22px !important;
+    }
     .el-menu-demo {
       padding: 0 15%;
       position: fixed;
@@ -191,8 +211,19 @@
     .header_moble_menu {
       display: none;
     }
+    .el-menu-item {
+      font-size: 15px;
+    }
     .el-menu-demo li {
       border: none !important;
+    }
+    .search_input {
+
+    }
+    .search_input input:focus {
+      box-shadow: 0px 2px 5px rgba(0,0,0,.2);
+      border: 1px solid rgba(0,0,0,.1);
+      transition: 1s;
     }
     .search_input_mobile {
       display: none;
@@ -204,16 +235,20 @@
       text-decoration: none;
     }
     .header-avatar {
-      height: 30px;
-      width: 30px;
+      height: 35px;
+      width: 35px;
       border-radius: 5px;
     }
     .el-menu-demo a:hover {
       color: #175199 !important;
     }
+    .search_input_button i {
+      font-weight: 700;
+    }
     .logo {
       height: 60px;
-      width: 150px;
+      width: 100px;
+      cursor: pointer;
       float: left;
       color: #0f88eb;
       line-height: 60px;
@@ -254,8 +289,7 @@
     .dropdown_content {
       border-bottom:  1px solid #e6e6e6;
       position: relative;
-      height: 70px;
-
+      height: 78px;
     }
     .dropdown_content:hover {
       background: #f3f3f3;
@@ -263,26 +297,30 @@
       cursor: pointer;
     }
     .dropdown_content_text {
+      width: 270px;
       font-size: 14px;
+      white-space:nowrap;
+      overflow: hidden;
+      text-overflow:ellipsis;
     }
     .dropdown_content_time {
       position: absolute;
-      right: 5px;
-      bottom: 5px;
+      right: 10px;
+      bottom: 10px;
       font-size: 14px;
       color: #999;
     }
     .dropdown_content_t {
       position: absolute;
-      left: 60px;
+      left: 75px;
       top: 10px;
     }
     .dropdown_content_img {
       position: absolute;
       top: 10px;
       left: 10px;
-      height: 40px;
-      width: 40px;
+      height: 50px;
+      width: 50px;
       border-radius: 50%;
     }
   }

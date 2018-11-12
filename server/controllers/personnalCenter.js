@@ -1,22 +1,40 @@
 const model = require('../model');
 let {User,Article} = model.AllModels;
 const moment = require('moment')
+const md5 = require('js-md5');
 
 module.exports = {
     'POST /api/updataUserInfo': async (ctx, next) => {
         ctx.response.type = 'application/json';
-        console.log(ctx.request.body.description)
-        let upDataUserInfo = await User.update(
-            {
-                gender: ctx.request.body.gender,
-                description: ctx.request.body.description
-            },
-            {
-                where: {
-                    id: ctx.request.body.uid
+        if (ctx.request.body.password === '') {
+            let upDataUserInfonp = await User.update(
+                {
+                    username: ctx.request.body.username,
+                    gender: ctx.request.body.gender,
+                    description: ctx.request.body.description
+                },
+                {
+                    where: {
+                        id: ctx.request.body.uid
+                    }
                 }
-            }
-        )
+            )
+        } else {
+            let upDataUserInfo = await User.update(
+                {
+                    username: ctx.request.body.username,
+                    gender: ctx.request.body.gender,
+                    description: ctx.request.body.description,
+                    password: md5(ctx.request.body.password)
+                },
+                {
+                    where: {
+                        id: ctx.request.body.uid
+                    }
+                }
+            )
+        }
+
         ctx.response.body = '更新成功';
     },
     'GET /api/updateDescription': async (ctx, next) => {

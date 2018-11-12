@@ -14,22 +14,24 @@
           <div style="margin-top:20px; font-size: 14px;"><b style="margin-right:30px">个人简介</b> {{userInfo.description}}</div>
         </div>
         <el-button v-show="nowLogin" @click="editVisible = true" class="personnal_center_userInfo_button" type="primary" plain>编辑个人资料</el-button>
-        <el-button v-show="!nowLogin" @click="privateMessageBlockVisible = true" class="personnal_center_sixin_button" plain>发私信</el-button>
-        <el-button v-show="!nowLogin" @click="addConcern(userInfo.id)" class="personnal_center_sixin_button" type="primary" plain>关 注</el-button>
+        <el-button v-show="!nowLogin" @click="privateMessageBlockVisible = true" class="personnal_center_sixin_button" :disabled="!loginStatic.isLogin" plain>发私信</el-button>
+        <el-button v-show="!nowLogin" @click="addConcern(userInfo.id)" class="personnal_center_guanzhu_button" type="primary" :disabled="!loginStatic.isLogin" plain>关 注</el-button>
         <!-- 修改个人信息 -->
         <el-dialog
+          class="editUInfo"
           title="修改个人信息"
           :visible.sync="editVisible"
           width="30%"
           :before-close="bfCloseUserEdit">
           <span>
               <div class="personnalCenterLabel">
-                  用户名: {{userInfo.username}}
+                  用户名:
               </div>
+              <el-input v-model="userEditForm.username"></el-input>
               <div class="personnalCenterLabel">
                   更改头像
               </div>
-              <upLoadAvatar :uid="userInfo.id" :upic="userInfo.pic"/>
+              <upLoadAvatar class="cAvatar" :uid="userInfo.id" :upic="userInfo.pic"/>
               <div class="personnalCenterLabel">
                   更改性别
               </div>
@@ -42,10 +44,14 @@
                   更改简介
               </div>
               <el-input v-model="userEditForm.description" placeholder="个人简介"></el-input>
+              <div class="personnalCenterLabel">
+                修改密码(选添)
+              </div>
+              <el-input type="password" v-model="userEditForm.password" placeholder="新密码"></el-input>
+              <el-input style="margin-top: 5px;" type="password" v-model="userEditForm.checkPassword" placeholder="确认新密码"></el-input>
           </span>
           <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="editUserInfo">修 改</el-button>
-            <el-button @click="editVisible = false">关 闭</el-button>
           </span>
           </el-dialog>
     <!-- 私信BLOCK         -->
@@ -67,19 +73,24 @@
       <div class="personnal_center_Profile">
           <el-tabs v-model="activeName" type="border-card" class="personnal_center_ProfileMain" @tab-click="handleClick">
             <el-tab-pane label="文章" name="first">
-              <div v-for="item in dataA" class="personnal_center_ProfileMain_fa">
+              <div v-for="item in dataA" :key="item.id" class="personnal_center_ProfileMain_fa">
                 <router-link :to="{ name:'articleDetail', params: {aid: item.id,upic: item.upic,username: item.username,createdAt: item.createdAt,uid: loginStatic.uid} }">{{item.title}}</router-link>
+                <el-button @click="toTopicD(item.articleType)" size="small" type="primary" style="float:right">{{item.articleType}}</el-button>
                 <div class="personnal_center_ProfileMain_fa_txt">
-                  <span>类型：文章</span> <span>话题：{{item.articleType}}</span> <span>收藏：{{item.fTimes}}</span>
+                  <span>类型：文章</span><span>收藏：{{item.fTimes}}</span>
                 </div>
               </div>
               <notFound v-show="!dataA.length"/>
             </el-tab-pane>
-            <el-tab-pane label="回答" name="second">
-              <notFound v-show="mainShowNotFound.second"/>
-            </el-tab-pane>
             <el-tab-pane label="提问" name="third">
-              <notFound v-show="mainShowNotFound.third"/>
+              <div class="personnal_center_ProfileMain_fa" v-for="item in dataQ" :key="item.id">
+                <router-link :to="{ name: 'answerDetail', params: {answerid: item.id}}">{{item.title}}</router-link>
+                <el-button @click="toTopicD(item.topic)" size="small" type="primary" style="float:right">{{item.topic}}</el-button>
+                <div class="personnal_center_ProfileMain_fa_txt">
+                  <span>类型：提问</span><span>收藏：0</span>
+                </div>
+              </div>
+              <notFound v-show="!dataQ.length"/>
             </el-tab-pane>
             <el-tab-pane label="收藏" name="fourth">
               <el-tabs  type="border" tab-position="left" style="left: 120px;margin-left: -20px;">
@@ -93,14 +104,26 @@
                   <notFound v-show="mainShowNotFound.fourth_1"/>
                 </el-tab-pane>
                 <el-tab-pane label="收藏问题">
-                    <notFound v-show="mainShowNotFound.fourth_2"/>
+                    <div v-for="item in dataFQ" class="personnal_center_ProfileMain_fa">
+                      <router-link :to="{ name:'answerDetail', params: { answerid: item.id } }">{{item.title}}</router-link>
+                      <div class="personnal_center_ProfileMain_fa_txt">
+                        <span>类型：提问</span> <span>收藏：{{item.fTimes}}</span>
+                      </div>
+                    </div>
+                    <notFound v-show="!dataFT.length"/>
                 </el-tab-pane>
-                <el-tab-pane label="收藏回答">
-                    <notFound v-show="mainShowNotFound.fourth_3"/>
+                <el-tab-pane label="关注话题">
+                    <div v-for="item in dataFT" class="personnal_center_ProfileMain_fa">
+                      <router-link :to="{ name:'topicDetail', params: {topic: item.title, tab: 'first'} }">{{item.title}}</router-link>
+                      <div class="personnal_center_ProfileMain_fa_txt">
+                        <span>类型：话题</span> <span>收藏：{{item.fTimes}}</span>
+                      </div>
+                    </div>
+                    <notFound v-show="!dataFT.length"/>
                 </el-tab-pane>
               </el-tabs>
             </el-tab-pane>
-            <el-tab-pane label="已关注" name="fifth">
+            <el-tab-pane label="关注了" name="fifth">
                 <div v-for="item in concern" class="follow_item">
                     <img @click="toPersonnalDetail(item.id)" :src="item.pic" alt="" class="follow_img">
                     <div @click="toPersonnalDetail(item.id)" class="follow_name">
@@ -112,7 +135,7 @@
                 </div>
                 <notFound v-show="!concern.length"/>
             </el-tab-pane>
-            <el-tab-pane label="关注我" name="six">
+            <el-tab-pane label="关注者" name="six">
                 <div v-for="item in fans" class="follow_item">
                     <img @click="toPersonnalDetail(item.id)" :src="item.pic" alt="" class="follow_img">
                     <div @click="toPersonnalDetail(item.id)" class="follow_name">
@@ -125,10 +148,25 @@
                 <notFound v-show="!fans.length"/>
             </el-tab-pane>
           </el-tabs>
+        </div>
+      <div class="personnal_center_aside">
+        <div class="personnal_aside_title">
+          个人成就
+        </div>
+        <div class="personnal_aside_gz">
+          <div class="personnal_aside_gz1">
+            <b>关注了</b>
+            <p>{{concern.length}}</p>
+          </div>
+          <div class="personnal_aside_gz2">
+              <b>关注者</b>
+              <p>{{fans.length}}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  
+
 </template>
 
 <script>
@@ -137,6 +175,7 @@ import upLoadAvatar from '@/components/upLoadAvatar.vue'
 import myHeader from '@/components/header.vue'
 import notFound from '@/components/notFound.vue'
 import axios from '../utils/axiosService'
+const pat = new RegExp("[^a-zA-Z0-9\_\u4e00-\u9fa5]","i")             //字母数字汉字
 export default {
   name: 'personnalCenter',
   components: {
@@ -147,17 +186,20 @@ export default {
   data () {
     return {
       dataA: [],
+      dataQ: [],
       editVisible: false,
       privateMessageBlockVisible: false,
       userEditForm: {
         gender: '',
-        description: ''
+        description: '',
+        password: '',
+        checkPassword: ''
       },
       sex: '',
       activeName: this.$route.params.tab,
-      dataFA: [],
+
       uid: this.$route.params.uid,
-      nowLogin: true,
+      nowLogin: false,
       userInfo: '',
       privateMessageContent: '',
       mainShowNotFound: {
@@ -167,11 +209,13 @@ export default {
         fourth: true,
         fourth_1: true,
         fourth_2: true,
-        fourth_3: true,
         fifth: true,
       },
       concern: [],
-      fans: []
+      fans: [],
+      dataFA: [],
+      dataFT: [],
+      dataFQ: []
     }
   },
   created() {
@@ -179,6 +223,9 @@ export default {
     this.getUserInfo()
   },
   methods: {
+    toTopicD(tp) {
+      this.$router.push({path: `/topicDetail/${tp}/first`})
+    },
     addConcern(toUid) {
       let data = {
         sendUid: this.loginStatic.uid,
@@ -204,21 +251,26 @@ export default {
     },
     editUserInfo() {
       let data = {
+        username: this.userEditForm.username,
         gender: this.userEditForm.gender,
         description: this.userEditForm.description,
+        password: this.userEditForm.password,
         uid: this.uid
       }
-      axios.post('/api/updataUserInfo',data).then((res) => {
+      if (data.password === this.userEditForm.checkPassword && data.password.length >= 8 && data.password.length <= 16 && !pat.test(data.password.password)) {
+        this.updateUsr(data)
+      } else {
+        if (data.password === '' && this.userEditForm.checkPassword === '') {
+          this.updateUsr(data)
+          return
+        }
         this.$message({
-          message: res.data,
-          type: 'success',
+          message: '密码不符合规则',
+          type: 'error',
           duration: 1000
         })
-        this.bfCloseUserEdit()
-        this.editVisible = false
-      }).catch((error) => {
-        console.log(error)
-      })
+      }
+
     },
     bfCloseUserEdit() {
       this.editVisible = false
@@ -226,7 +278,20 @@ export default {
       this.getUserInfo()
     },
     handleClick(tab, event) {
-        this.$router.push({ path: `/personnalCenter/${this.loginStatic.uid}/${this.$route.params.who}/${tab.name}`})
+        this.$router.push({ path: `/personnalCenter/${this.uid}/${this.$route.params.who}/${tab.name}`})
+    },
+    updateUsr(data) {
+      axios.post('/api/updataUserInfo',data).then((res) => {
+          this.$message({
+            message: res.data,
+            type: 'success',
+            duration: 1000
+          })
+          this.bfCloseUserEdit()
+          this.editVisible = false
+        }).catch((error) => {
+          console.log(error)
+        })
     },
     changeUrl() {
       if (this.loginStatic.uid != this.uid && this.$route.params.who == "me") {
@@ -239,14 +304,17 @@ export default {
       }
       let that = this
       axios.post('/api/getDataA',data).then((res) => {
-        console.log(res.data)
         this.dataA = res.data
-        
+      }).catch((error) => {
+        console.log(error)
+      })
+      axios.post('/api/getMyTiwen',data).then((res) => {
+        this.dataQ = res.data
+        console.log(this.dataQ)
       }).catch((error) => {
         console.log(error)
       })
       axios.post('/api/getUconcern',data).then((res) => {
-        console.log(res.data)
         this.concern = res.data.concern
         this.fans = res.data.fans
       }).catch((error) => {
@@ -257,6 +325,16 @@ export default {
         if (res.data.length != 0) {
           this.mainShowNotFound.fourth_1 = false
         }
+      }).catch((error) => {
+        console.log(error)
+      })
+      axios.post('/api/getFavoriteTopic',data).then((res) => {
+        that.dataFT = res.data
+      }).catch((error) => {
+        console.log(error)
+      })
+      axios.post('/api/getFavoriteQuestion',data).then((res) => {
+        that.dataFQ = res.data
       }).catch((error) => {
         console.log(error)
       })
@@ -275,7 +353,7 @@ export default {
         } else if (res.data[0].gender == 2) {
           this.sex = '其他（你懂得）'
         }
-        
+        this.userEditForm.username = res.data[0].username
         this.userEditForm.gender = res.data[0].gender
         this.userEditForm.description = res.data[0].description
       }).catch((error) => {
@@ -311,28 +389,60 @@ export default {
   watch: {
       "$route": "changeUrl"
   },
-  props: {
-    loginStatic: {
-        required: true
-    },
-    privateMessageData: {
-        required: true
-    }
-  },
+  props: ['loginStatic','privateMessageData'],
   mounted() {
-    if (this.$route.params.who != "me") {
-      this.nowLogin = false
-    }
+    const logInfo = this.loginStatic
+    setTimeout(() => {
+      if (this.$route.params.who !== "me" && this.$route.params.uid !== logInfo.uid) {
+        this.nowLogin = false
+      } else if (this.$route.params.who === "me" && this.$route.params.uid === logInfo.uid) {
+        this.nowLogin = true
+      }
+    }, 0);
   }
 }
 </script>
 <style>
+  .editUInfo .el-dialog__body {
+    padding-top: 0;
+  }
+  .personnal_gz_item {
+    padding: 10px;
+    font-weight: 700;
+    color: #999;
+    background: #f3f3f3;
+  }
+  .personnal_aside_gz {
+    display: flex;
+    padding: 10px;
+    color: #999;
+    border-bottom: 1px solid rgba(0, 0, 0, .1);
+  }
+  p {
+    margin: 0;
+  }
+  .personnal_aside_gz2,
+  .personnal_aside_gz1 {
+    flex: 1;
+    text-align: center;
+  }
   .personnal_center_container {
     margin: 0 15%;
   }
   .personnal_center_userInfo {
-    margin-top: 10px;
+    margin: 10px 0;
     position: relative;
+    padding-bottom: 50px;
+    background-image: linear-gradient(#e4e7ed 0%, #fff 40%);
+  }
+  .personnal_center_userInfo:hover .personnal_center_userInfo_img img {
+    animation: movePic 2s;
+    animation-fill-mode:forwards;
+  }
+  @keyframes movePic {
+    0% { border-radius: 0;transform: rotateY(0deg); }
+    50% { border-radius: 50%;transform: rotateY(180deg); }
+    100% { border-radius: 0;transform: rotateY(360deg); }
   }
   .personnal_center_userInfo_img {
     height: 150px;
@@ -340,11 +450,12 @@ export default {
     position: absolute;
     top: 50px;
     left: 80px;
-    padding: 0
+    padding: 0;
   }
   .personnal_center_userInfo_img img {
     height: 150px;
     width: 150px;
+    border: 2px solid rgba(0, 0, 0, .1);
   }
   .personnal_center_userInfo_content {
     height: 130px;
@@ -352,17 +463,41 @@ export default {
   }
   .personnal_center_sixin_button,
   .personnal_center_userInfo_button {
-    margin-left: 80% !important;
-    margin-bottom: 15px;
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+  }
+  .personnal_center_guanzhu_button {
+    position: absolute;
+    bottom: 50px;
+    right: 150px;
+  }
+  .personnal_center_aside {
+    float: left;
+    width: 29%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,.1);
+
+  }
+  .personnal_aside_title {
+    padding: 10px;
+    font-weight: 700;
+    color: #646464;
+    border-bottom: 1px solid rgba(0, 0, 0, .1);
   }
   .personnal_center_ProfileMain {
     width: 100%;
     margin-right: 10px;
-    float: left;
     min-height: 429px;
   }
   .personnal_center_Profile {
-    margin-top: 10px
+    width: 70%;
+    margin-right: 10px;
+    float: left;
+  }
+  .personnal_center_ProfileMain_fa {
+    border-bottom: 1px solid rgba(0, 0, 0, .05);
+    margin-bottom: 10px;
   }
   .personnal_center_ProfileMain_fa a {
     font-size: 18px;
@@ -391,6 +526,7 @@ export default {
     cursor: pointer;
   }
   .follow_item {
+    padding-top: 10px;
     position: relative;
     height: 80px;
     border-bottom: 1px solid rgba(0, 0, 0, .1)
@@ -404,5 +540,8 @@ export default {
     font-size: 20px;
     color: #f1403c;
     cursor: pointer;
+  }
+  .cAvatar {
+    margin-bottom: 10px;
   }
 </style>

@@ -1,17 +1,12 @@
 <template>
-    <div style="text-align: center;padding-top: 100px;">
-        <h1 style="color: red">404</h1>
-        <h1 style="color: red">NOT FOUND THIS PAGE</h1>
-        <h1>BY YUYAN WEBSITE</h1>
-        <p>url地址肯定发有错啦找都找不到o(╥﹏╥)o</p>
+    <div class="notF">
+      <div class="n-header"><span @click="backHome" class="n-tohome"><i class="el-icon-arrow-left"></i>回到主页</span></div>
     </div>
 </template>
 
 <script>
-import moment from 'moment'
-import axios from '../utils/axiosService'
 export default {
-  name: 'NotFoundComponent',
+  name: 'NotFoundPage',
   components: {
   },
   data () {
@@ -21,6 +16,30 @@ export default {
   created() {
   },
   methods: {
+    backHome() {
+      this.$router.push({ path: '/home' })
+    }
   }
 }
 </script>
+<style>
+  .notF {
+    background: url('/static/notFound.png') no-repeat;
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+  }
+  .n-header {
+    font-size: 20px;
+    background: rgba(0, 0, 0, .2);
+    padding: 20px 10%;
+  }
+  .n-tohome {
+    cursor: pointer;
+    color: #fff;
+  }
+  .n-tohome:hover {
+    color: #8fe9f5;
+    transition: .3s;
+  }
+</style>

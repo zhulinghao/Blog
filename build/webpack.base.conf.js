@@ -10,10 +10,10 @@ function resolve (dir) {
 
 module.exports = {
   context: path.resolve(__dirname, '../'),
-  entry: {
+  entry: {                //入口文件
     app: './src/main.js'
   },
-  output: {
+  output: {               //打包后输出到
     path: config.build.assetsRoot,
     filename: '[name].js',
     publicPath: process.env.NODE_ENV === 'production'
@@ -27,7 +27,7 @@ module.exports = {
       '@': resolve('src'),
     }
   },
-  module: {
+  module: {               //loaders 转换器
     rules: [
       {
         test: /\.vue$/,

@@ -1,7 +1,7 @@
-# Musashi博客网站
+# 毕业设计 by zlh
 
 ## Build Setup
-
+[Site](https://zhu8191553.github.io/IFE2017/demo/build/#/)
 ``` bash
 # install dependencies
 npm install
@@ -15,5 +15,3 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

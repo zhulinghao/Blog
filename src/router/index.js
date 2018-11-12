@@ -1,29 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import home from '@/views/home'
-import detail from '@/views/detail'
-import reg from '@/views/reg'
-import write from '@/views/write'
-import articleDetail from '@/views/articleDetail'
-import personnalCenter from '@/views/personnalCenter'
-import NotFoundComponent from '@/views/NotFoundComponent'
-import answer from '@/views/answer'
-import answerDetail from '@/views/answerDetail'
-import topic from '@/views/topic'
-import search from '@/views/search' 
-import topicDetail from '@/views/topicDetail'
-import privateMessageDetail from '@/views/privateMessageDetail'
-import adminHome from '@/views/admin/adminHome'
-import admin from '@/views/admin/admin'
-import todoList from '@/views/todoList'
-import begin from '@/views/begin'
-import bookStore from '@/views/bookStore'
-import bookStoreDetail from '@/views/bookStoreDetail'
-import myBook from '@/views/myBook'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   routes: [
     {
@@ -33,101 +13,124 @@ export default new Router({
     {
       path: '/begin',
       name: 'begin',
-      component: begin
+      component: () => import('@/views/begin')
     },
     {
       path: '/home',
       name: 'home',
-      component: home
+      component: () => import('@/views/home')
     },
     {
       path: '/detail',
       name: 'detail',
-      component: detail
+      component: () => import('@/views/detail')
     },
     {
       path: '/reg',
       name: 'reg',
-      component: reg
+      component: () => import('@/views/reg')
     },
     {
-      path: '/write',
+      path: '/write/:aid',
       name: 'write',
-      component: write
+      component: () => import('@/views/write')
     },
     {
       path: '/articleDetail/:aid/:upic/:username/:createdAt/:uid',
       name: 'articleDetail',
-      component: articleDetail
+      component: () => import('@/views/articleDetail')
     },
     {
       path: '/personnalCenter/:uid/:who/:tab',
       name: 'personnalCenter',
-      component: personnalCenter
+      component: () => import('@/views/personnalCenter')
     },
     {
       path: '/answer',
       name: 'answer',
-      component: answer
+      component: () => import('@/views/answer')
     },
     {
       path: '/answerDetail/:answerid',
       name: 'answerDetail',
-      component: answerDetail
+      component: () => import('@/views/answerDetail')
     },
     {
       path: '/topic',
       name: 'topic',
-      component: topic
+      component: () => import('@/views/topic')
     },
     {
       path: '/search/:value/:tab',
       name: 'search',
-      component: search
+      component: () => import('@/views/search')
     },
     {
       path: '/topicDetail/:topic/:tab',
       name: 'topicDetail',
-      component: topicDetail
+      component: () => import('@/views/topicDetail')
     },
     {
       path: '/privateMessageDetail/:uid',
       name: 'privateMessageDetail',
-      component: privateMessageDetail
+      component: () => import('@/views/privateMessageDetail')
     },
     {
       path: '/todoList',
       name: 'todoList',
-      component: todoList
+      component: () => import('@/views/todoList')
     },
     {
       path: '/adminHome/:password/:tab',
       name: 'adminHome',
-      component: adminHome
+      component: () => import('@/views/admin/adminHome')
     },
     {
       path: '/admin',
       name: 'admin',
-      component: admin
+      component: () => import('@/views/admin/admin')
     },
     {
       path: '/bookStore',
       name: 'bookStore',
-      component: bookStore
+      component: () => import('@/views/bookStore')
     },
     {
       path: '/bookStoreDetail/:id',
       name: 'bookStoreDetail',
-      component: bookStoreDetail
+      component: () => import('@/views/bookStoreDetail')
     },
     {
       path: '/myBook/:id',
       name: 'myBook',
-      component: myBook
+      component: () => import('@/views/myBook')
     },
-    { 
+    {
+      path: '/gameEat',
+      name: 'gameEat',
+      component: () => import('@/views/game/eat')
+    },
+    {
       path: '*',
-      component: NotFoundComponent
+      component: () => import('@/views/NotFoundComponent')
     }
   ]
 })
+
+
+//  router  拦截器
+router.beforeEach((to, from, next) => {
+  if (to.meta.requireAuth) { // 如果需要权限
+    if (store.getters.token) { // 存在的话，直接跳转过去
+      next()
+    } else {
+      next({ path: '/' })
+      store.commit('SHOW_SIGN_DIALOG')
+    }
+  } else {
+    next()
+  }
+})
+
+
+export default router;

@@ -9,7 +9,8 @@ module.exports = {
             content: ctx.request.body.content,
             uid: ctx.request.body.uid,
             username: ctx.request.body.username,
-            tid: ''
+            tid: '',
+            fTimes: 0
         })
         ctx.response.body = "提问成功";
     },
@@ -22,7 +23,6 @@ module.exports = {
             upic: '',
             description: '',
             commentData: ''
-            
         })
         ctx.response.body = "回答成功";
     },
@@ -63,7 +63,7 @@ module.exports = {
             })
         });
         ctx.response.body = questions;
-        
+
     },
     'GET /api/getAnswers':async (ctx, next) => {
         ctx.response.type = 'application/json';
@@ -165,4 +165,14 @@ module.exports = {
         });
         ctx.response.body = '删除成功';
     },
+    'POST /api/getMyTiwen': async (ctx, next) => {
+        ctx.response.type = 'application/json';
+        let data = ctx.request.body
+        let myHuida = await Answer.findAll({
+            where: {
+                uid: data.uid
+            }
+        })
+        ctx.response.body = myHuida;
+    }
 }

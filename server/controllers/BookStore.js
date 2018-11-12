@@ -1,8 +1,8 @@
 const model = require('../model')
 const moment = require('moment')
-let {BuyBook,User,BookStore} = model.AllModels;
+let { BuyBook, User, BookStore } = model.AllModels;
 module.exports = {
-    'POST /api/addBook': async (ctx, next) => {
+    'POST /api/addBook': async(ctx, next) => {
         ctx.response.type = 'application/json';
         let tmpData = {
             pic: ctx.request.body.pic,
@@ -21,14 +21,14 @@ module.exports = {
         })
         ctx.response.body = tmpData;
     },
-    'GET /api/getBooks': async (ctx, next) => {
+    'GET /api/getBooks': async(ctx, next) => {
         ctx.response.type = 'application/json';
         let book = await BookStore.findAll({});
         ctx.response.body = book;
     },
-    'POST /api/getBookDetail': async (ctx, next) => {
+    'POST /api/getBookDetail': async(ctx, next) => {
         ctx.response.type = 'application/json';
-        console.log(ctx.request.body.id,"idddd")
+        console.log(ctx.request.body.id, "idddd")
         let bookDetail = await BookStore.findAll({
             where: {
                 id: ctx.request.body.id
@@ -36,7 +36,7 @@ module.exports = {
         });
         ctx.response.body = bookDetail;
     },
-    'POST /api/buyBook': async (ctx, next) => {
+    'POST /api/buyBook': async(ctx, next) => {
         ctx.response.type = 'application/json';
         let req = await BuyBook.create({
             Uid: ctx.request.body.Uid,
@@ -44,7 +44,7 @@ module.exports = {
         });
         ctx.response.body = 0;
     },
-    'POST /api/exameBookDetail': async (ctx, next) => {
+    'POST /api/exameBookDetail': async(ctx, next) => {
         ctx.response.type = 'application/json';
         let req = await BuyBook.findAll({
             where: {
@@ -54,7 +54,7 @@ module.exports = {
         });
         ctx.response.body = req;
     },
-    'POST /api/getMyBook': async (ctx, next) => {
+    'POST /api/getMyBook': async(ctx, next) => {
         ctx.response.type = 'application/json';
         let bookId = await BuyBook.findAll({
             where: {
@@ -71,6 +71,18 @@ module.exports = {
             });
         });
         ctx.response.body = req;
+    },
+    'POST /api/updatBook': async(ctx, next) => {
+        let updateBook = await BookStore.update({
+            name: ctx.request.body.name,
+            author: ctx.request.body.author,
+            description: ctx.request.body.description,
+            promotion: ctx.request.body.promotion
+        }, {
+            where: {
+                id: ctx.request.body.id
+            }
+        })
+        ctx.response.body = '更新成功';
     }
-
 };

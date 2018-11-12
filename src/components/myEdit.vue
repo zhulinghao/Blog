@@ -12,8 +12,9 @@
           </el-select>
       </div>
       <div>
-        <div id="editorElem" style="text-align:left;background:#fff"></div>
-        <el-button class="edit_button" type="primary" v-on:click="getContent">发布</el-button>
+        <div id="editorElem" style="text-align:left;background:#fff;"></div>
+        <el-button v-show="!edit" class="edit_button" type="default" v-on:click="getContent">发布</el-button>
+        <el-button v-show="edit" class="edit_button" type="default" v-on:click="getContent">更新</el-button>
       </div>
   </div>
 </template>
@@ -28,16 +29,27 @@
           editorContent: '',
           title: '',
           topicOptions: [],
-          value: ''
+          value: '',
+          edit: ''
         }
       },
-      props: {
-        loginStatic: {
-          required: true
-        }
-      },
+      props: ['loginStatic','aid'],
       created() {
-        this.title = moment().format('YYYY-MM-DD')
+        if (this.aid !== 'none') {
+          this.edit = true
+          let data = { aid: this.aid}
+          axios.post('/api/detailArticle',data).then((res) => {
+            let tmp = res.data[0]
+            this.editorContent = tmp.content
+            document.querySelector('.w-e-text').innerHTML = tmp.content
+            this.value = tmp.articleType
+            this.title = tmp.title
+          }).catch((error) => {
+            console.log(error)
+          })
+        } else {
+          this.title = moment().format('YYYY-MM-DD')
+        }
         axios.get('/api/getTopics').then((res) => {
             let tmp = res.data
             tmp.forEach(element => {
@@ -59,12 +71,20 @@
               content: this.editorContent,
               title: this.title,
               uid: this.loginStatic.uid,
-              articleType: this.value
+              articleType: this.value,
+              aid: this.aid
             }
-            axios.post("/api/addArticle",data).then(function (req) {
-              that.sucMessage('SUCCESS')
-              that.$router.push({path: '/home'})
-            })
+            if (this.edit === true) {
+              axios.post("/api/editArticle",data).then(function (req) {
+                that.sucMessage('SUCCESS')
+                that.$router.push({ name:'personnalCenter', params: {uid: that.loginStatic.uid, who:'me', tab: 'first'} })
+              })
+            } else {
+              axios.post("/api/addArticle",data).then(function (req) {
+                that.sucMessage('SUCCESS')
+                that.$router.push({ name:'personnalCenter', params: {uid: that.loginStatic.uid, who:'me', tab: 'first'} })
+              })
+            }
           } else {
             alert('您的文章写得太短了')
           }
@@ -82,6 +102,12 @@
 
 <style>
   .edit_button {
-    margin: 10px auto; 
+    position: absolute;
+    top: 10px;
+    right: 350px;
+  }
+  #editorElem .w-e-text-container {
+    height: 450px !important;
+    position: relative;
   }
 </style>
